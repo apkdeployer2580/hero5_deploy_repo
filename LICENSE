@@ -1,0 +1,30 @@
+Hero5NativeAPP — licence status
+===============================
+
+NO LICENCE IS GRANTED.
+
+The code written for this project is Copyright (c) 2026 the repository owner, all
+rights reserved. No permission to use, copy, modify or distribute it is given to
+anyone.
+
+That is the DEFAULT position under copyright law, not a decision — it is written down
+here only so the absence of a licence file cannot be mistaken for permission. The
+owner may replace this file with a real licence at any time. Until they do, all rights
+in that code are reserved.
+
+
+What this file does NOT cover
+-----------------------------
+1. `vendor/` — two vendored forks of other people's crates, each governed by the
+   licence file in its own directory: `vendor/arm32_cpu` (MIT,
+   https://github.com/dlunch/arm32_cpu) and `vendor/softbuffer` (MIT OR Apache-2.0,
+   https://github.com/rust-windowing/softbuffer). They are NOT relicensed by anything
+   above.
+
+2. 히어로즈 로어 5 (Heroes Lore 5) — the game. The original binary and asset
+   archive under `payload/` are included only so the app builds. They are not
+   covered by anything here and no claim is made to them.
+   Copyright in the game belongs to its rights holders.
+
+3. Reverse engineering notes (`ANALYSIS.md`, `docs/SERVER.md`, `tools_re/*`) describe
+   that game's binary. They are observations about someone else's work.

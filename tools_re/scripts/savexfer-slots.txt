@@ -1,0 +1,17 @@
+# The slot list, for the save rows' round trip (`savexfer-title.txt`): what
+# the storage holds after a staged save was applied at the start of this run.
+#
+#   cargo run -q -p hl5_probe -- --boot --storage out/savexfer-b \
+#       --screen-option --boot-mode skip-network \
+#       --script tools_re/scripts/savexfer-slots.txt
+#
+# Evidence: savexfer-slots.png. NOT for `ab_905.sh`.
+
+frames 700
+tap 200 200          # title: "Tap to Continue"
+frames 90
+tap 152 48           # 게임시작
+frames 20
+key select
+frames 90
+dump out/shot/savexfer-slots.png

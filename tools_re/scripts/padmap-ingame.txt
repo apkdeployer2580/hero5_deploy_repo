@@ -1,0 +1,138 @@
+# The in-game menu's 시스템 > 환경설정 with the host's two rows (화면필터,
+# 패드키) and the 패드키 row's mapping screen drawn over the real field HUD
+# (`hl5_core::igoptions`, `hl5_core::padmap` scene InGame).
+#
+#   cargo run -q -p hl5_probe -- --boot --storage out/padmap-ig-storage \
+#       --screen-option --pad --screen 2340x1080 --boot-mode skip-network \
+#       --script tools_re/scripts/padmap-ingame.txt
+#
+# The opening is `gamepad.txt`'s (a new game, SKIP through the prologue,
+# the quest popup dismissed), then `key back` opens the in-game menu on its
+# 3x3 icon page; 시스템 is the last icon.
+#
+# Evidence: padmap-ig-menu.png (the system tab), padmap-ig-list.png (the
+# option page with 화면필터 at display 5), padmap-ig-row9.png (패드키),
+# padmap-ig-ask.png (the popup), padmap-ig-screen.png (the mapping screen:
+# the real belt, OK disc, dash button, joystick plate and bar with badges),
+# padmap-ig-assigned.png (the first belt slot tapped at (255,207) and given
+# the top face button, Y), padmap-ig-closed.png (완료 pressed: back on the
+# list, 패드키 = 커스텀).
+# NOT for `ab_905.sh`.
+
+frames 700
+tap 200 200          # title: "Tap to Continue"
+frames 90
+tap 152 48           # 게임시작
+frames 20
+key select
+frames 120
+tap 200 68           # save slot 1
+frames 20
+key select
+frames 120
+tap 140 68           # class: 워리어
+frames 20
+key select
+frames 150
+key select
+frames 250
+tap 28 10            # SKIP out of the opening cutscene
+frames 60
+frames 240
+tap 28 10
+frames 90
+tap 28 10
+frames 90
+tap 28 10
+frames 90
+tap 28 10
+frames 90
+tap 28 10
+frames 90
+tap 28 10
+frames 90
+tap 28 10
+frames 90
+tap 28 10
+frames 90
+tap 28 10
+frames 90
+tap 28 10
+frames 90
+tap 28 10
+frames 90
+tap 28 10
+frames 90
+tap 240 200
+frames 20
+key select
+frames 60
+pad-connect
+frames 4
+dump out/shot/padmap-ig-field.png
+
+# The in-game menu, and the 시스템 icon (3x3, last cell).
+key back
+frames 60
+dump out/shot/padmap-ig-icons.png
+key right
+frames 10
+key right
+frames 10
+key down
+frames 10
+key down
+frames 15
+key select
+frames 40
+dump out/shot/padmap-ig-menu.png
+
+# 환경설정 on the system page (저장하기 / 환경설정 / 도움말 / 메인화면).
+key down
+frames 10
+key select
+frames 40
+dump out/shot/padmap-ig-list.png
+
+# Nine downs: 패드키 is display 9.
+key down
+frames 8
+key down
+frames 8
+key down
+frames 8
+key down
+frames 8
+key down
+frames 8
+key down
+frames 8
+key down
+frames 8
+key down
+frames 8
+key down
+frames 20
+dump out/shot/padmap-ig-row9.png
+
+key right
+frames 25
+dump out/shot/padmap-ig-ask.png
+key select          # 예
+frames 25
+dump out/shot/padmap-ig-screen.png
+
+tap 255 207         # the first belt slot (240,192) on the 400x240 canvas
+frames 10
+dump out/shot/padmap-ig-selected.png
+pad 100             # Y
+frames 10
+dump out/shot/padmap-ig-assigned.png
+tap 382 154         # the dash button (365..400, 139..169)
+frames 10
+pad 108             # START -> 대시 (already its default; stays)
+frames 10
+# 완료: the grid's last row, second cell (88,70)-(148,86).
+tap 118 78
+frames 25
+dump out/shot/padmap-ig-closed.png

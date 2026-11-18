@@ -1,0 +1,33 @@
+# Boot, then keep dismissing whatever the dead-server stub puts on screen,
+# and watch where the game settles.
+#
+# The S9 reference (docs/reference/original-s9-01-connecting.png) shows the
+# original doing the same thing on the same dead backend: "Connecting", then
+# the title, then class select. This script is the A/B against that.
+
+frames 60
+dump out/shot/01.png
+
+tap 200 145
+frames 40
+dump out/shot/02.png
+
+tap 200 145
+frames 40
+dump out/shot/03.png
+
+tap 200 145
+frames 40
+dump out/shot/04.png
+
+tap 200 145
+frames 60
+dump out/shot/05.png
+
+key select
+frames 40
+dump out/shot/06.png
+
+key select
+frames 40
+dump out/shot/07.png

@@ -1,0 +1,154 @@
+# 환경설정 — the option list, with the host's four rows (`hl5_core::options`):
+# 화면필터 under 화면효과 (display 5), 패드키 under 터치방식 (display 9), 배치변경
+# under it (10) and 해상도 last (display 11). The guest's 데이터 관리 is not shown. This script is about the 해상도 row
+# (`hl5_core::screen`); 화면필터 / 패드키 have `padmap.txt`, 배치변경
+# `hudlayout.txt`.
+#
+#   cargo run -q -p hl5_probe -- --boot --storage out/opt-storage \
+#       --screen-option --screen 2340x1080 --boot-mode skip-network \
+#       --script tools_re/scripts/option.txt
+#
+# The main menu is a 3x3 grid and 환경설정 is the middle cell:
+#
+#     게임시작   익스퍼트   창고접속
+#     업데이트   환경설정   달성과제
+#     도움말     게임문의   게임종료
+#
+# **The first key after the title tap does not move the highlight** (the same
+# trap CLAUDE.md records for 창고접속), so reaching the centre is
+# right, right, down — not right, down.
+#
+# The list is twelve rows — eight of the guest's nine plus the host's four —
+# and 해상도 is the last. Eleven `down`s from the top land on it (every UP/DOWN
+# is answered by `options::key_hook`, which wraps at twelve where the guest's
+# own wrap went 8 -> 0).
+#
+# **Every value change here raises the restart prompt** (`screen::ask_restart`,
+# the guest's own two-button 게임종료 dialog with a body of ours), and until it
+# is answered it owns the keys and the touches. So each change below is
+# followed by `key back`, which the popup treats as 아니오 — it closes and the
+# row keeps its new value. `key select` there would take the *first* button,
+# 예, and close the game. The prompt has a script of its own:
+# `resolution-restart.txt`.
+#
+# NOT for `ab_905.sh`. It exists to look at one screen, and the 해상도 row is
+# a deliberate behaviour change, so byte-identity is not what it is for.
+
+frames 60
+tap 200 145        # the offline "server is not available" popup, if it is up
+frames 700         # rating screen, EA logo, opening text, title
+
+tap 200 200        # "Tap to Continue"
+frames 90
+
+key right          # swallowed: the first key only wakes the highlight
+frames 20
+key right          # -> 익스퍼트
+frames 20
+key down           # -> 환경설정
+frames 20
+
+key select
+frames 60
+dump out/shot/opt-top.png
+
+# Down to the twelfth row. The list scrolls once the cursor passes slot 5.
+key down
+frames 12
+key down
+frames 12
+key down
+frames 12
+key down
+frames 12
+key down
+frames 12
+key down
+frames 12
+key down
+frames 12
+key down
+frames 12
+dump out/shot/opt-row8.png
+key down
+frames 12
+key down
+frames 12
+key down
+frames 20
+dump out/shot/opt-row9.png
+
+# The value walks with left/right, exactly like 투구보기 and 터치방식 — each
+# step through the prompt, dismissed with 아니오 so the value stands.
+key right
+frames 20
+key back
+frames 12
+dump out/shot/opt-b.png
+key right
+frames 20
+key back
+frames 12
+dump out/shot/opt-c.png
+key left
+frames 20
+key back
+frames 12
+dump out/shot/opt-back-to-b.png
+
+# …and down from the last row wraps to the first, as the guest's own does.
+key down
+frames 20
+dump out/shot/opt-wrapped.png
+
+# --- and the same row by touch, which is how a phone reaches it -------------
+#
+# The two scroll arrows are their own hooks (`options::scroll_down_hook`,
+# `scroll_up_hook`): the guest clamps the window's first row at 3 and wraps
+# past the top to row 8, and both numbers are three short with twelve rows.
+# Coordinates are for the 585x270 canvas — halfW 292, halfH 135:
+#
+#   scroll arrows  x in (halfW+0x40, halfW+0x52] = (356, 366]
+#                  down y in (halfH+0x31, halfH+0x50] = (184, 215]
+#                  up   y in (halfH-0x45, halfH-0x26] = (66, 97]
+#   value arrows   left  x in (halfW-1,      halfW+0x16] = (291, 314]
+#                  right x in (halfW+0x29,   halfW+0x40] = (333, 356]
+#   the twelfth row sits in slot 5, y = halfH - 0x3a + 5*0x17 = 192
+
+tap 360 200
+frames 15
+tap 360 200
+frames 15
+tap 360 200
+frames 15
+tap 360 200
+frames 15
+tap 360 200
+frames 15
+tap 360 200
+frames 20
+dump out/shot/opt-touch-scrolled.png
+
+tap 260 196        # the row itself: the cursor moves to it
+frames 20
+tap 345 196        # the right-hand value arrow -> the prompt
+frames 20
+key back           # 아니오, so the scroll-arrow taps below reach the list
+frames 12
+dump out/shot/opt-touch-right.png
+
+tap 360 80         # scroll up, seven times: past the top wraps to the last row
+frames 15
+tap 360 80
+frames 15
+tap 360 80
+frames 15
+tap 360 80
+frames 15
+tap 360 80
+frames 15
+tap 360 80
+frames 15
+tap 360 80
+frames 20
+dump out/shot/opt-touch-wrapup.png

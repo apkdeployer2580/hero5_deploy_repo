@@ -1,0 +1,147 @@
+# 시스템 > 환경설정's three save rows, in game (`hl5_core::savexfer`, §70).
+#
+#   cargo run -q -p hl5_probe -- --boot --storage out/savexfer-a \
+#       --screen-option --boot-mode skip-network \
+#       --save-doc out/savexfer-doc.h5save \
+#       --script tools_re/scripts/savexfer-ingame.txt
+#
+# Start from an EMPTY storage (`rm -rf out/savexfer-a`). The opening is
+# `padmap-ingame.txt`'s: a new game, SKIP through the prologue, the quest popup
+# dismissed, `key back` for the menu, the 시스템 icon, 환경설정. 400x240
+# coordinates — no `--screen`.
+#
+# The list is fourteen rows; the save rows are displays 11, 12, 13.
+#
+# Evidence:
+#   savexfer-ig-row11.png     cursor on 세이브 내보내기 (no value box)
+#   savexfer-ig-exported.png  the game saved first, the document written:
+#                             `세이브를 내보냈습니다.` (one button, OK)
+#   savexfer-ig-ask.png       불러오기: `불러온 세이브로 바뀝니다. …`
+#   savexfer-ig-apply.png     the picked file named: `<date> 캐릭터 1명 …`
+#   savexfer-ig-no.png        아니오: back on the list, nothing staged
+#   savexfer-ig-novault.png   되돌리기 with an empty vault: `되돌릴 세이브가 없습니다.`
+# and the summary's `save rows` line: 1 export, 1 pick, 0 staged, 2 questions
+# (import, apply), 2 messages (exported, no vault), 1 game save first;
+# `out/savexfer-doc.h5save` is a zip whose kickass holds one character.
+#
+# NOT for `ab_905.sh`.
+
+frames 700
+tap 200 200          # title: "Tap to Continue"
+frames 90
+tap 152 48           # 게임시작
+frames 20
+key select
+frames 120
+tap 200 68           # save slot 1
+frames 20
+key select
+frames 120
+tap 140 68           # class: 워리어
+frames 20
+key select
+frames 150
+key select
+frames 250
+tap 28 10            # SKIP out of the opening cutscene
+frames 60
+frames 240
+tap 28 10
+frames 90
+tap 28 10
+frames 90
+tap 28 10
+frames 90
+tap 28 10
+frames 90
+tap 28 10
+frames 90
+tap 28 10
+frames 90
+tap 28 10
+frames 90
+tap 28 10
+frames 90
+tap 28 10
+frames 90
+tap 28 10
+frames 90
+tap 28 10
+frames 90
+tap 28 10
+frames 90
+tap 28 10
+frames 90
+tap 240 200
+frames 20
+key select
+frames 60
+
+# The in-game menu, the 시스템 icon (3x3, last cell), 환경설정.
+key back
+frames 60
+key right
+frames 10
+key right
+frames 10
+key down
+frames 10
+key down
+frames 15
+key select
+frames 40
+key down
+frames 10
+key select
+frames 40
+
+# Eleven downs: 세이브 내보내기 is display 11.
+key down
+frames 8
+key down
+frames 8
+key down
+frames 8
+key down
+frames 8
+key down
+frames 8
+key down
+frames 8
+key down
+frames 8
+key down
+frames 8
+key down
+frames 8
+key down
+frames 8
+key down
+frames 20
+dump out/shot/savexfer-ig-row11.png
+
+key select           # 내보내기: the game's own save, then the document
+frames 30
+dump out/shot/savexfer-ig-exported.png
+key select           # OK
+frames 20
+
+key down             # 세이브 불러오기
+frames 10
+key select
+frames 25
+dump out/shot/savexfer-ig-ask.png
+key select           # 예: the document screen (the probe's --save-doc)
+frames 30
+dump out/shot/savexfer-ig-apply.png
+key back             # 아니오: nothing staged, the game keeps running
+frames 25
+dump out/shot/savexfer-ig-no.png
+
+key down             # 세이브 되돌리기
+frames 10
+key select
+frames 25
+dump out/shot/savexfer-ig-novault.png
+key select
+frames 20

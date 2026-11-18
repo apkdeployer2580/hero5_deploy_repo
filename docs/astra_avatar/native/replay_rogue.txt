@@ -1,0 +1,461 @@
+# 아바타: the `*아바타` button on the character page, and the wardrobe behind it.
+#
+#   cargo run -q -p hl5_probe -- --boot --avatar --script tools_re/scripts/avatar.txt
+#
+# 400x240 — do NOT add `--screen`, every tap below is in those coordinates.
+# The page's origin is x0 = halfW-0x58, y0 = halfH-0x66 = (112, 18); the
+# button is the guest's own `*취소` slot at (x0, y0+0xa2), tabs are at
+# y0+0x44 every 28 px, rows at y0+0x58 every 18 px (`hl5_core::avatar`).
+#
+# Evidence:
+#   1. avatar-char.png has `*아바타` at the bar's left end, beside `#상세`.
+#   2. A tap on it opens the wardrobe (avatar-open.png) — the tap goes through
+#      the guest's own `KeyPress('*')`, so `opened 1x` is the guest's hit test
+#      and the key hook agreeing.
+#   3. 갑옷 -> 가시나무갑옷, 무기 -> the second legendary, 투구 -> 마법사 모자 (the
+#      first costume drawn for this project, composed onto the archive's own
+#      bare head at boot — `costume: 5 of 5 costume sheet(s) served`): the
+#      header's figure changes each time (avatar-armour/-weapon/-hat.png), the
+#      summary line says `3 change(s)` and a non-zero `layer(s) dressed`, and
+#      `<storage>/hl5_avatar.txt` holds `0 0 0=100001 1=6023 4=26`.
+#
+# Opens a character page with a fresh save, so no stat point is pending and
+# the slot is free. Do NOT add this to `ab_905.sh`.
+
+frames 700
+tap 200 200          # title: "Tap to Continue"
+frames 90
+tap 152 48           # 게임시작
+frames 20
+key select
+frames 120
+tap 200 68           # save slot 1
+frames 20
+key select
+frames 120
+key back
+frames 6
+tap 255 78           # class: 로그
+frames 20
+key select
+frames 150
+key select
+frames 250
+
+tap 28 10            # SKIP out of the opening cutscene
+frames 60
+frames 240
+
+tap 28 10
+frames 90
+tap 28 10
+frames 90
+tap 28 10
+frames 90
+tap 28 10
+frames 90
+tap 28 10
+frames 90
+tap 28 10
+frames 90
+tap 28 10
+frames 90
+tap 28 10
+frames 90
+tap 28 10
+frames 90
+tap 28 10
+frames 90
+tap 28 10
+frames 90
+tap 28 10
+frames 90
+
+tap 240 200
+frames 20
+key select
+frames 60
+key back
+frames 60
+key select
+frames 60
+
+tap 140 190
+frames 10
+tap 129 94
+key down
+key down
+key down
+key down
+key down
+key down
+key select
+frames 3
+tap 157 94
+key down
+key select
+frames 3
+tap 185 94
+key down
+key select
+frames 3
+tap 213 94
+key down
+key select
+frames 3
+tap 241 94
+key down
+key select
+frames 3
+dump docs/astra_avatar/native/screenshots/rogue_01_wardrobe.png
+tap 140 190
+frames 4
+dump docs/astra_avatar/native/screenshots/rogue_01_character.png
+key back
+key back
+frames 12
+dump docs/astra_avatar/native/screenshots/rogue_01_field.png
+key back
+frames 4
+key select
+frames 8
+tap 140 190
+frames 4
+tap 129 94
+key down
+key select
+frames 3
+tap 157 94
+key down
+key select
+frames 3
+tap 185 94
+key down
+key select
+frames 3
+tap 213 94
+key down
+key select
+frames 3
+tap 241 94
+key down
+key select
+frames 3
+dump docs/astra_avatar/native/screenshots/rogue_02_wardrobe.png
+tap 140 190
+frames 4
+dump docs/astra_avatar/native/screenshots/rogue_02_character.png
+key back
+key back
+frames 12
+dump docs/astra_avatar/native/screenshots/rogue_02_field.png
+key back
+frames 4
+key select
+frames 8
+tap 140 190
+frames 4
+tap 129 94
+key down
+key select
+frames 3
+tap 157 94
+key down
+key select
+frames 3
+tap 185 94
+key down
+key select
+frames 3
+tap 213 94
+key down
+key select
+frames 3
+tap 241 94
+key down
+key select
+frames 3
+dump docs/astra_avatar/native/screenshots/rogue_03_wardrobe.png
+tap 140 190
+frames 4
+dump docs/astra_avatar/native/screenshots/rogue_03_character.png
+key back
+key back
+frames 12
+dump docs/astra_avatar/native/screenshots/rogue_03_field.png
+key back
+frames 4
+key select
+frames 8
+tap 140 190
+frames 4
+tap 129 94
+key down
+key select
+frames 3
+tap 157 94
+key down
+key select
+frames 3
+tap 185 94
+key down
+key select
+frames 3
+tap 213 94
+key down
+key select
+frames 3
+tap 241 94
+key down
+key select
+frames 3
+dump docs/astra_avatar/native/screenshots/rogue_04_wardrobe.png
+tap 140 190
+frames 4
+dump docs/astra_avatar/native/screenshots/rogue_04_character.png
+key back
+key back
+frames 12
+dump docs/astra_avatar/native/screenshots/rogue_04_field.png
+key back
+frames 4
+key select
+frames 8
+tap 140 190
+frames 4
+tap 129 94
+key down
+key select
+frames 3
+tap 157 94
+key down
+key select
+frames 3
+tap 185 94
+key down
+key select
+frames 3
+tap 213 94
+key down
+key select
+frames 3
+tap 241 94
+key down
+key select
+frames 3
+dump docs/astra_avatar/native/screenshots/rogue_05_wardrobe.png
+tap 140 190
+frames 4
+dump docs/astra_avatar/native/screenshots/rogue_05_character.png
+key back
+key back
+frames 12
+dump docs/astra_avatar/native/screenshots/rogue_05_field.png
+key back
+frames 4
+key select
+frames 8
+tap 140 190
+frames 4
+tap 129 94
+key down
+key select
+frames 3
+tap 157 94
+key down
+key select
+frames 3
+tap 185 94
+key down
+key select
+frames 3
+tap 213 94
+key down
+key select
+frames 3
+tap 241 94
+key down
+key select
+frames 3
+dump docs/astra_avatar/native/screenshots/rogue_06_wardrobe.png
+tap 140 190
+frames 4
+dump docs/astra_avatar/native/screenshots/rogue_06_character.png
+key back
+key back
+frames 12
+dump docs/astra_avatar/native/screenshots/rogue_06_field.png
+key back
+frames 4
+key select
+frames 8
+tap 140 190
+frames 4
+tap 129 94
+key down
+key select
+frames 3
+tap 157 94
+key down
+key select
+frames 3
+tap 185 94
+key down
+key select
+frames 3
+tap 213 94
+key down
+key select
+frames 3
+tap 241 94
+key down
+key select
+frames 3
+dump docs/astra_avatar/native/screenshots/rogue_07_wardrobe.png
+tap 140 190
+frames 4
+dump docs/astra_avatar/native/screenshots/rogue_07_character.png
+key back
+key back
+frames 12
+dump docs/astra_avatar/native/screenshots/rogue_07_field.png
+key back
+frames 4
+key select
+frames 8
+tap 140 190
+frames 4
+tap 129 94
+key down
+key select
+frames 3
+tap 157 94
+key down
+key select
+frames 3
+tap 185 94
+key down
+key select
+frames 3
+tap 213 94
+key down
+key select
+frames 3
+tap 241 94
+key down
+key select
+frames 3
+dump docs/astra_avatar/native/screenshots/rogue_08_wardrobe.png
+tap 140 190
+frames 4
+dump docs/astra_avatar/native/screenshots/rogue_08_character.png
+key back
+key back
+frames 12
+dump docs/astra_avatar/native/screenshots/rogue_08_field.png
+key back
+frames 4
+key select
+frames 8
+tap 140 190
+frames 4
+tap 129 94
+key down
+key select
+frames 3
+tap 157 94
+key down
+key select
+frames 3
+tap 185 94
+key down
+key select
+frames 3
+tap 213 94
+key down
+key select
+frames 3
+tap 241 94
+key down
+key select
+frames 3
+dump docs/astra_avatar/native/screenshots/rogue_09_wardrobe.png
+tap 140 190
+frames 4
+dump docs/astra_avatar/native/screenshots/rogue_09_character.png
+key back
+key back
+frames 12
+dump docs/astra_avatar/native/screenshots/rogue_09_field.png
+key back
+frames 4
+key select
+frames 8
+tap 140 190
+frames 4
+tap 129 94
+key down
+key select
+frames 3
+tap 157 94
+key down
+key select
+frames 3
+tap 185 94
+key down
+key select
+frames 3
+tap 213 94
+key down
+key select
+frames 3
+tap 241 94
+key down
+key select
+frames 3
+dump docs/astra_avatar/native/screenshots/rogue_10_wardrobe.png
+tap 140 190
+frames 4
+dump docs/astra_avatar/native/screenshots/rogue_10_character.png
+key back
+key back
+frames 12
+dump docs/astra_avatar/native/screenshots/rogue_10_field.png
+key back
+frames 4
+key select
+frames 8
+tap 140 190
+frames 4
+tap 129 94
+key down
+key select
+frames 3
+tap 157 94
+key down
+key select
+frames 3
+tap 185 94
+key down
+key select
+frames 3
+tap 213 94
+key down
+key select
+frames 3
+tap 241 94
+key down
+key select
+frames 3
+dump docs/astra_avatar/native/screenshots/rogue_11_wardrobe.png
+tap 140 190
+frames 4
+dump docs/astra_avatar/native/screenshots/rogue_11_character.png
+key back
+key back
+frames 12
+dump docs/astra_avatar/native/screenshots/rogue_11_field.png
+key back
+frames 4
+key select
+frames 8

@@ -1,0 +1,71 @@
+# Online run: start a game, so there is a character for the networked menu
+# entries to work with.
+#
+#   python tools_re/testserver.py --port 7301
+#   cargo run -q -p hl5_probe -- --boot --server 127.0.0.1:7301 \
+#       --script tools_re/scripts/newgame-online.txt --film out/film
+#
+# Two things this UI does that are worth writing down, because getting either
+# wrong reads as "the tap did nothing":
+#
+#   * A tap **moves the highlight**; it does not activate. Activating is a
+#     second tap on the same cell, or `key select`. This script uses
+#     tap-then-select so a cell whose rectangle is slightly off still shows up
+#     as a wrong highlight rather than a silent no-op.
+#   * `key right` twice in a row moves the highlight only once. That is not
+#     input timing: 창고접속 is inert until a character exists.
+#
+# Cell geometry, measured off a dump (the highlighted cell is the only solid
+# orange block on screen): 익스퍼트 covers x 176..220, y 24..72, so the main
+# menu's columns are centred near 152 / 198 / 244 and its rows near
+# 48 / 104 / 160.
+
+frames 700
+tap 200 200          # title: "Tap to Continue"
+frames 90
+dump out/shot/60-menu.png
+
+tap 152 48           # 게임시작
+frames 20
+key select
+frames 120
+dump out/shot/61-slots.png
+
+tap 200 68           # save slot 1
+frames 20
+key select
+frames 120
+dump out/shot/62-class.png
+
+tap 140 68           # class: 워리어
+frames 20
+key select
+frames 150
+dump out/shot/63.png
+
+key select
+frames 150
+dump out/shot/64.png
+
+frames 300
+dump out/shot/65.png
+
+# The opening cutscene. Its SKIP button sits at the top-left corner; the
+# dialogue otherwise advances a line per tap.
+tap 30 10
+frames 20
+key select
+frames 200
+dump out/shot/66-skip.png
+
+frames 300
+dump out/shot/67.png
+
+# In-game. The WIPI BACK key is the usual way into a midas title's own menu.
+key back
+frames 90
+dump out/shot/70-ingame-menu.png
+
+key select
+frames 90
+dump out/shot/71.png

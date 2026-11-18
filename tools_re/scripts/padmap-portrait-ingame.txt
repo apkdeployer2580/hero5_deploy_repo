@@ -1,0 +1,108 @@
+# 세로, in game: 시스템 > 환경설정 with the host's two rows, and the mapping
+# screen over the in-game menu — the belt drawn by the guest's own
+# `DrawSkillBelt` in its one-row 세로 layout, everything else in the grid.
+#
+#   cargo run -q -p hl5_probe -- --boot --storage out/padmap-pig-storage \
+#       --screen-option --pad --screen-mode p --boot-mode skip-network \
+#       --script tools_re/scripts/padmap-portrait-ingame.txt
+#
+# The opening is `portrait.txt`'s (keys only — the canvas is 240x320).
+# Evidence: padmap-pig-list.png, padmap-pig-screen.png (belt + grid, badges),
+# padmap-pig-assigned.png (first belt slot -> R1). NOT for `ab_905.sh`.
+
+frames 700
+key select
+frames 90
+key select
+frames 120
+key select
+frames 120
+key select
+frames 150
+key select
+frames 150
+key select
+frames 250
+key 35
+frames 120
+key 35
+frames 90
+key 35
+frames 90
+key 35
+frames 90
+key 35
+frames 90
+key 35
+frames 90
+key 35
+frames 90
+key 35
+frames 90
+key 35
+frames 90
+key 35
+frames 90
+key select
+frames 60
+key select
+frames 60
+key select
+frames 60
+frames 200
+pad-connect
+frames 4
+
+key back
+frames 60
+key right
+frames 10
+key right
+frames 10
+key down
+frames 10
+key down
+frames 15
+key select
+frames 40
+key down
+frames 10
+key select
+frames 40
+dump out/shot/padmap-pig-list.png
+
+key down
+frames 8
+key down
+frames 8
+key down
+frames 8
+key down
+frames 8
+key down
+frames 8
+key down
+frames 8
+key down
+frames 8
+key down
+frames 8
+key down
+frames 20
+key right
+frames 25
+dump out/shot/padmap-pig-ask.png
+key select
+frames 25
+dump out/shot/padmap-pig-screen.png
+
+tap 23 295          # the first belt slot's plate (8..38, 280..310)
+frames 10
+dump out/shot/padmap-pig-selected.png
+pad 103
+frames 10
+dump out/shot/padmap-pig-assigned.png
+# 완료: grid cell 7 -> (126,164)-(216,184)
+tap 170 174
+frames 25
+dump out/shot/padmap-pig-closed.png

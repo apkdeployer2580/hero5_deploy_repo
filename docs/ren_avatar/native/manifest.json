@@ -1,0 +1,182 @@
+[
+  {
+    "outfit": 1,
+    "layer": 0,
+    "id": 130010,
+    "sheet": 321,
+    "name": "이브닝 드레스",
+    "frames": 6,
+    "authored_frames": 6
+  },
+  {
+    "outfit": 1,
+    "layer": 1,
+    "id": 130011,
+    "sheet": 321,
+    "name": "이브닝 드레스",
+    "frames": 46,
+    "authored_frames": 34
+  },
+  {
+    "outfit": 2,
+    "layer": 0,
+    "id": 130020,
+    "sheet": 322,
+    "name": "바니걸",
+    "frames": 6,
+    "authored_frames": 6
+  },
+  {
+    "outfit": 2,
+    "layer": 1,
+    "id": 130021,
+    "sheet": 322,
+    "name": "바니걸",
+    "frames": 46,
+    "authored_frames": 34
+  },
+  {
+    "outfit": 3,
+    "layer": 0,
+    "id": 130030,
+    "sheet": 323,
+    "name": "장교복",
+    "frames": 6,
+    "authored_frames": 6
+  },
+  {
+    "outfit": 3,
+    "layer": 1,
+    "id": 130031,
+    "sheet": 323,
+    "name": "장교복",
+    "frames": 46,
+    "authored_frames": 34
+  },
+  {
+    "outfit": 4,
+    "layer": 0,
+    "id": 130040,
+    "sheet": 324,
+    "name": "여신",
+    "frames": 6,
+    "authored_frames": 6
+  },
+  {
+    "outfit": 4,
+    "layer": 1,
+    "id": 130041,
+    "sheet": 324,
+    "name": "여신",
+    "frames": 46,
+    "authored_frames": 34
+  },
+  {
+    "outfit": 5,
+    "layer": 0,
+    "id": 130050,
+    "sheet": 325,
+    "name": "눈사람",
+    "frames": 6,
+    "authored_frames": 6
+  },
+  {
+    "outfit": 5,
+    "layer": 1,
+    "id": 130051,
+    "sheet": 325,
+    "name": "눈사람",
+    "frames": 46,
+    "authored_frames": 34
+  },
+  {
+    "outfit": 6,
+    "layer": 0,
+    "id": 130060,
+    "sheet": 326,
+    "name": "별빛 망토",
+    "frames": 6,
+    "authored_frames": 6
+  },
+  {
+    "outfit": 6,
+    "layer": 1,
+    "id": 130061,
+    "sheet": 326,
+    "name": "별빛 망토",
+    "frames": 46,
+    "authored_frames": 34
+  },
+  {
+    "outfit": 7,
+    "layer": 0,
+    "id": 130070,
+    "sheet": 327,
+    "name": "천사",
+    "frames": 6,
+    "authored_frames": 6
+  },
+  {
+    "outfit": 7,
+    "layer": 1,
+    "id": 130071,
+    "sheet": 327,
+    "name": "천사",
+    "frames": 46,
+    "authored_frames": 34
+  },
+  {
+    "outfit": 8,
+    "layer": 0,
+    "id": 130080,
+    "sheet": 328,
+    "name": "마녀",
+    "frames": 6,
+    "authored_frames": 6
+  },
+  {
+    "outfit": 8,
+    "layer": 1,
+    "id": 130081,
+    "sheet": 328,
+    "name": "마녀",
+    "frames": 46,
+    "authored_frames": 34
+  },
+  {
+    "outfit": 9,
+    "layer": 0,
+    "id": 130090,
+    "sheet": 329,
+    "name": "고딕 드레스",
+    "frames": 6,
+    "authored_frames": 6
+  },
+  {
+    "outfit": 9,
+    "layer": 1,
+    "id": 130091,
+    "sheet": 329,
+    "name": "고딕 드레스",
+    "frames": 46,
+    "authored_frames": 34
+  },
+  {
+    "outfit": 10,
+    "layer": 0,
+    "id": 130100,
+    "sheet": 330,
+    "name": "여름 나들이",
+    "frames": 6,
+    "authored_frames": 6
+  },
+  {
+    "outfit": 10,
+    "layer": 1,
+    "id": 130101,
+    "sheet": 330,
+    "name": "여름 나들이",
+    "frames": 46,
+    "authored_frames": 34
+  }
+]

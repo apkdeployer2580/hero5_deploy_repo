@@ -1,0 +1,33 @@
+[package]
+name = "hl5_android"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[lib]
+# GameActivity loads System.loadLibrary("main"), so the cdylib must be
+# libmain.so — the name is the contract, not a preference.
+name = "main"
+crate-type = ["cdylib"]
+path = "src/lib.rs"
+
+[dependencies]
+hl5_core = { path = "../hl5_core" }
+# `release_max_level_info` compiles the guest's per-call HLE trace out of
+# release builds entirely. Without it every one of those sites still costs an
+# atomic level load, on the thread with the frame budget.
+log = { version = "0.4", features = ["release_max_level_info"] }
+
+# winit brings android-activity (GameActivity) transitively; depending on
+# android-activity directly here would risk two incompatible copies.
+winit = { version = "0.30", features = ["android-game-activity"] }
+softbuffer = "0.4"
+
+[target.'cfg(target_os = "android")'.dependencies]
+android_logger = "0.14"
+# For AndroidApp::asset_manager()'s return type — the bundled guest and VFS.
+ndk = "0.9"
+# Reaching Hl5Audio (SoundPool/MediaPlayer). Pinned to the version
+# android-activity already pulls in: two copies of `jni` in one process would
+# mean two JavaVM wrappers and two class caches for the same VM.
+jni = "0.22"

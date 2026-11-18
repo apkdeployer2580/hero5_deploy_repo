@@ -1,0 +1,108 @@
+# Every drop door must leave no displayed option slot at `<= 0` — the byte
+# `CommonUi::DrawItemDiscription` prints `common_text` 287 = `+랜덤옵션` for
+# (ANALYSIS.md §54).
+#
+#   cargo run -q -p hl5_probe -- --boot --script tools_re/scripts/dropoptions.txt #       --storage out/dropopt --count _ZN9ItemTable13SetItemOptionEP8ItemInfoa
+#
+# WHY THIS EXISTS. The stranded band-4 rows `lostdrops.rs` reopened are all
+# 영웅 with slot 2 reserved (0xFF); a monster's own band-4 arm fills that slot
+# from the drop record, the first host walk did not, and the third line read
+# `+랜덤옵션`. Reaching that band by killing things is ~0.25% per kill, so this
+# drops the rows directly through the guest's own `MapItem::NewDropItem` —
+# the call every drop path ends in, with the return address the `MakeSocket`
+# net keys on — and reads the item back.
+#
+# Expected: every `drop` line prints `empty=[]` (none marked `<-- +랜덤옵션`),
+# and `--count SetItemOption` = the number of slots the net had to roll:
+# 스톰브링거 bare (1) + 사티라스코트 bare (1) + 지크문드 set (1) = 3. The
+# drops that carry the record's pair and the 전설 / 에픽 rows add nothing —
+# the net declines them, exactly as it declines every shipped drop.
+#
+# DO NOT ADD THIS TO `ab_905.sh`'s scene list — it exists to move a counter
+# and print bytes, not to be compared as pixels.
+
+
+frames 700
+tap 200 200          # title: "Tap to Continue"
+frames 90
+tap 152 48           # 게임시작
+frames 20
+key select
+frames 120
+tap 200 68           # save slot 1
+frames 20
+key select
+frames 120
+tap 140 68           # class: 워리어
+frames 20
+key select
+frames 150
+key select
+frames 250
+
+tap 28 10            # SKIP
+frames 60
+frames 120
+frames 120
+frames 120
+frames 120
+frames 120
+frames 120
+frames 120
+frames 120
+
+tap 28 10
+frames 90
+tap 28 10
+frames 90
+tap 28 10
+frames 90
+tap 28 10
+frames 90
+tap 28 10
+frames 90
+tap 28 10
+frames 90
+tap 28 10
+frames 90
+tap 28 10
+frames 90
+tap 28 10
+frames 90
+tap 28 10
+frames 90
+tap 28 10
+frames 90
+tap 28 10
+frames 90
+
+tap 240 200
+frames 20
+key select
+
+# Gameplay. Dismiss the quest popup (OK is on the right).
+tap 240 200
+frames 20
+key select
+frames 60
+dump out/shot/d0-hud.png
+
+# 스톰브링거 (item_00 row 17, 영웅, slot 2 reserved) the way the first
+# lostdrops walk dropped it: every override -1. The net must roll slot 2.
+drop 0 17
+# The same row the way the guest's band-4 arm (and lostdrops now) drops it:
+# the record's own pair as slot 2. Nothing left to roll.
+drop 0 17 35 2
+# 사티라스코트 (item_06 row 37) bare, and with its record pair (15, 6).
+drop 6 37
+drop 6 37 15 6
+# A 전설 row names all three slots itself — untouched.
+drop 0 80
+# 쟈칼의발톱 (item_10 row 6, 에픽): two lines, both named — untouched.
+drop 10 6
+# A set row (지크문드, item_06 row 77): the door §49 closed, still closed.
+drop 6 77
+# 다크코트 (item_06 row 17) with its record pair (15, 2) — nothing to roll.
+drop 6 17 15 2
+frames 5
+dump out/shot/d1-drops.png

@@ -1,0 +1,128 @@
+# 가방 10페이지 목록 확대 (ANALYSIS.md §65.11) — step 1 of 2: a warrior whose
+# bag holds 150 long swords (random sockets from the guest's own NewItemEx),
+# two stacks of orbs, socket expanders, refine stones and money, saved to
+# slot 1. Step 2 is `tenlists.txt`.
+#
+#   S=out/tenlists
+#   rm -rf $S && mkdir -p $S
+#   cargo run -q -p hl5_probe -- --boot --ten-pages --storage $S \
+#       --script tools_re/scripts/tenlists-fill.txt
+#   cargo run -q -p hl5_probe -- --boot --ten-pages --boost-rates --storage $S \
+#       --memwatch lists --script tools_re/scripts/tenlists.txt > out/tenlists.log
+#
+# DO NOT ADD THIS TO `ab_905.sh`: it needs `--ten-pages`.
+
+frames 700
+tap 200 200          # title: "Tap to Continue"
+frames 90
+tap 152 48           # 게임시작
+frames 20
+key select
+frames 120
+tap 200 68           # save slot 1
+frames 20
+key select
+frames 120
+tap 140 68           # class: 워리어
+frames 20
+key select
+frames 150
+key select
+frames 250
+dump out/shot/90-cutscene.png
+
+tap 28 10            # SKIP
+frames 60
+dump out/shot/91-loading.png
+frames 120
+dump out/shot/92-ingame.png
+frames 120
+dump out/shot/93-ingame.png
+frames 120
+dump out/shot/94-ingame.png
+frames 120
+dump out/shot/95-ingame.png
+frames 120
+dump out/shot/96-ingame.png
+frames 120
+dump out/shot/97-ingame.png
+frames 120
+dump out/shot/98-ingame.png
+frames 120
+dump out/shot/99-ingame.png
+
+# SKIP ends one scripted event, not the whole opening. Keep pressing it.
+tap 28 10
+frames 90
+dump out/shot/a01-skip.png
+tap 28 10
+frames 90
+dump out/shot/a02-skip.png
+tap 28 10
+frames 90
+dump out/shot/a03-skip.png
+tap 28 10
+frames 90
+dump out/shot/a04-skip.png
+tap 28 10
+frames 90
+dump out/shot/a05-skip.png
+tap 28 10
+frames 90
+dump out/shot/a06-skip.png
+tap 28 10
+frames 90
+dump out/shot/a07-skip.png
+tap 28 10
+frames 90
+dump out/shot/a08-skip.png
+tap 28 10
+frames 90
+dump out/shot/a09-skip.png
+tap 28 10
+frames 90
+dump out/shot/a10-skip.png
+tap 28 10
+frames 90
+dump out/shot/a11-skip.png
+tap 28 10
+frames 90
+dump out/shot/a12-skip.png
+
+# Gameplay at last. First dismiss the quest popup: its bottom bar is
+# 보상보기 (view reward) on the left and OK on the right, so OK is near
+# (240, 200) -- a tap at 200 lands on 보상보기 and the popup stays.
+tap 240 200
+frames 20
+key select
+frames 60
+dump out/shot/c0-hud.png
+
+# The HUD's top bar. Measured off a dump rather than eyeballed -- the three
+# labels are the only near-white runs in the top 20 rows:
+#     map  x 153..169 (centre 161)
+#     shop x 200..222 (centre 211)
+#     save x 250..272 (centre 261)     all at y ~= 11
+# Save first: the loading-screen tip says the cash shop needs the game saved
+# at least once.
+tap 261 11           # save
+frames 90
+dump out/shot/c1-save.png
+tap 240 200
+frames 20
+key select
+frames 90
+dump out/shot/c2-after-save.png
+give 0 0 150
+give 12 0 30
+give 12 1 30
+give 18 12 3
+give 11 10 20
+money 100000
+bagdump out/tenlists-fill.txt
+tap 261 11           # save
+frames 60
+tap 240 200
+frames 20
+key select
+frames 60

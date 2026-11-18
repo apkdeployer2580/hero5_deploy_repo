@@ -1,0 +1,114 @@
+# 아바타 옷장 드래그: the list scrolls under a finger (ANALYSIS.md §59).
+#
+#   cargo run -q -p hl5_probe -- --boot --avatar --storage out/avatar-drag --script tools_re/scripts/avatar-drag.txt
+#
+# 400x240 — do NOT add `--screen`. Same opening as avatar.txt (fresh save,
+# 워리어, character page), then on the 투구 tab (30 rows):
+#
+#   1. press on row 2, move 3 px: inside the slop, the row lights, nothing scrolls
+#   2. drag up 70 px: the list moves 4 rows (산타 모자 on top), nothing is worn
+#   3. press, drag down 20 px, release: one row back (고양이 귀 on top) — the
+#      release point decides, since the guest posts a move at the press point
+#      and keeps only the first move of a tick, so this drag's own move is lost
+#   4. tap row 1: 산타 모자 is worn; a press that wobbles 3 px is still a tap
+#      and wears 밀짚모자
+#
+# Evidence: the summary line says `2 change(s)` and `5 row(s) scrolled`, and
+# `<storage>/hl5_avatar.txt` holds `0 0 0=100005`. Frames out/shot/drag-*.png.
+# Do NOT add this to `ab_905.sh`.
+
+frames 700
+tap 200 200          # title: "Tap to Continue"
+frames 90
+tap 152 48           # 게임시작
+frames 20
+key select
+frames 120
+tap 200 68           # save slot 1
+frames 20
+key select
+frames 120
+tap 140 68           # class: 워리어
+frames 20
+key select
+frames 150
+key select
+frames 250
+
+tap 28 10            # SKIP out of the opening cutscene
+frames 60
+frames 240
+
+tap 28 10
+frames 90
+tap 28 10
+frames 90
+tap 28 10
+frames 90
+tap 28 10
+frames 90
+tap 28 10
+frames 90
+tap 28 10
+frames 90
+tap 28 10
+frames 90
+tap 28 10
+frames 90
+tap 28 10
+frames 90
+tap 28 10
+frames 90
+tap 28 10
+frames 90
+tap 28 10
+frames 90
+
+tap 240 200
+frames 20
+key select
+frames 60
+key back
+frames 60
+key select
+frames 60
+dump out/shot/avatar-char.png
+tap 140 190          # *아바타
+frames 20
+dump out/shot/drag-0-open.png
+press 150 150
+frames 2
+move 150 147
+frames 2
+dump out/shot/drag-1-slop.png
+move 150 132
+frames 2
+move 150 114
+frames 2
+move 150 96
+frames 2
+move 150 80
+frames 2
+dump out/shot/drag-2-dragged.png
+release 150 80
+frames 3
+echo after drag
+dump out/shot/drag-3-released.png
+press 150 132
+frames 2
+move 150 152
+frames 2
+release 150 152
+frames 3
+dump out/shot/drag-4-back.png
+echo after drag back
+tap 150 132
+frames 30
+dump out/shot/drag-5-tapped.png
+press 150 150
+frames 2
+move 150 147
+frames 2
+release 150 147
+frames 30
+dump out/shot/drag-6-smalltap.png

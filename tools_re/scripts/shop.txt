@@ -1,0 +1,45 @@
+# Online run, aimed at the cash shop.
+#
+#   python tools_re/testserver.py --port 7301
+#   cargo run -q -p hl5_probe -- --boot --server 127.0.0.1:7301 \
+#       --script tools_re/scripts/shop.txt --film out/film --film-every 20
+#
+# The main menu is a 3x3 grid, 게임시작 highlighted on entry:
+#
+#     게임시작   익스퍼트   창고접속
+#     업데이트   환경설정   달성과제
+#     도움말     게임문의   게임종료
+#
+# Driven with the d-pad rather than taps. A tap needs the cell rectangle in
+# 400x240 coordinates and those move with every layout; `right right select`
+# means the same thing on any screen size, and the guest treats the two input
+# paths identically (both land in onHandleEvent's jump table).
+#
+# 창고접속 ("warehouse access") is the networked entry, so it is where
+# category-6 traffic should come from.
+
+frames 700
+tap 200 200        # title: "Tap to Continue"
+frames 90
+dump out/shot/50-menu.png
+
+# One `key` is press, a frame, release, a frame. Two of them back to back
+# only move the highlight once -- the menu samples input on its own 50 ms
+# tick, so the second press lands inside the same tick as the first. Give
+# each keystroke its own tick.
+key right
+frames 15
+key right
+frames 30
+dump out/shot/51-warehouse-hilit.png
+
+key select
+frames 150
+dump out/shot/52.png
+
+key select
+frames 150
+dump out/shot/53.png
+
+frames 200
+dump out/shot/54.png

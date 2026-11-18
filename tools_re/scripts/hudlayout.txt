@@ -1,0 +1,136 @@
+# 환경설정's 배치변경 row on the title screen and the HUD editor behind it
+# (`hl5_core::hudlayout`, `hl5_core::hudedit`).
+#
+#   cargo run -q -p hl5_probe -- --boot --storage out/hudlayout-storage \
+#       --screen-option --pad --screen 2340x1080 --boot-mode skip-network \
+#       --script tools_re/scripts/hudlayout.txt
+#
+# The list is thirteen rows: 패드키 at display 9, 배치변경 under it (10),
+# 데이터 관리 11, 해상도 12. The opening is `padmap.txt`'s. Coordinates are
+# the 585x270 canvas: OK's body is (524,200)-(584,260), the joystick is
+# centred on (65,205).
+#
+# Evidence:
+#   hudlayout-row10.png      cursor on 배치변경 (기본)
+#   hudlayout-ask.png        the popup: 버튼 배치를 변경하시겠습니까?
+#   hudlayout-no.png         아니오: still 기본
+#   hudlayout-editor.png     예: the editor, every control at home, outlined
+#   hudlayout-dragged.png    OK dragged to the middle, selected (orange)
+#   hudlayout-pinched.png    a second finger: OK at 150%
+#   hudlayout-plus.png       the joystick selected and stepped by −/+
+#   hudlayout-pinch-anywhere.png  two fingers on empty ground: the joystick 71%
+#   hudlayout-closed.png     완료: back on the list, 배치변경 = 커스텀
+# and the summary's `배치변경` line: editor opened 1x, moves, resizes,
+# 1 save; `hl5_hudlayout.txt` in the storage says `mode custom`,
+# `ok -254 -80 150`, `stick 0 0 71`.
+#
+# NOT for `ab_905.sh`: the row is a deliberate behaviour change.
+
+frames 60
+tap 200 145
+frames 700
+tap 200 200
+frames 90
+key right
+frames 20
+key right
+frames 20
+key down
+frames 20
+key select
+frames 60
+
+# Ten downs: 배치변경 is display 10.
+key down
+frames 10
+key down
+frames 10
+key down
+frames 10
+key down
+frames 10
+key down
+frames 10
+key down
+frames 10
+key down
+frames 10
+key down
+frames 10
+key down
+frames 10
+key down
+frames 20
+dump out/shot/hudlayout-row10.png
+
+# 기본 -> 커스텀 asks; 아니오 (BACK) leaves it on 기본.
+key right
+frames 25
+dump out/shot/hudlayout-ask.png
+key back
+frames 25
+dump out/shot/hudlayout-no.png
+
+# Ask again; 예 (the first button) opens the editor.
+key right
+frames 25
+key select
+frames 25
+dump out/shot/hudlayout-editor.png
+
+# Drag OK from its centre (554,230) to (300,150).
+press 554 230 0
+frames 2
+move 480 200 0
+frames 2
+move 380 170 0
+frames 2
+move 300 150 0
+frames 4
+dump out/shot/hudlayout-dragged.png
+
+# Keep holding it; a second finger 40 px away, pulled out to 60 px: 150%.
+press 340 150 1
+frames 2
+move 350 150 1
+frames 2
+move 360 150 1
+frames 4
+release 360 150 1
+frames 2
+release 300 150 0
+frames 4
+dump out/shot/hudlayout-pinched.png
+
+# The joystick: select it, step it down twice (−5% each) and up once.
+tap 65 205
+frames 4
+tap 17 108
+frames 4
+tap 17 108
+frames 4
+tap 55 108
+frames 6
+dump out/shot/hudlayout-plus.png
+
+# With the joystick still picked, two fingers on empty ground in the middle
+# of the screen, 80 px apart, closed to 60: the phone's zoom gesture sizes the
+# picked control wherever it is made — 95% x 60/80 = 71%.
+press 250 60 3
+frames 1
+press 330 60 4
+frames 2
+move 320 60 4
+frames 2
+move 310 60 4
+frames 4
+release 310 60 4
+frames 1
+release 250 60 3
+frames 4
+dump out/shot/hudlayout-pinch-anywhere.png
+
+# 완료.
+tap 36 68
+frames 25
+dump out/shot/hudlayout-closed.png

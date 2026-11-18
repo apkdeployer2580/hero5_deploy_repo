@@ -1,0 +1,21 @@
+# Normalise text on the way in, check out native on Windows.
+* text=auto
+
+# Must stay LF or they will not run.
+gradlew text eol=lf
+*.sh text eol=lf
+
+# Must stay CRLF.
+*.ps1 text eol=crlf
+*.bat text eol=crlf
+
+# The original game, byte for byte. Never touch these: a line-ending-mangled
+# copy no longer loads.
+*.apk binary
+*.zip binary
+*.so binary
+*.idb binary
+*.jar binary
+*.bin binary
+payload/** binary
+*.png binary

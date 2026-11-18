@@ -1,0 +1,75 @@
+# 세로: the 240x320 canvas, the relaid field HUD, and the keypad walking.
+#
+#   cargo run -q -p hl5_probe -- --boot --boot-mode skip-network --screen-mode p --pad \
+#       --script tools_re/scripts/portrait.txt --count 0x8d03c
+#
+# `--screen-mode p` needs no `--screen`: the canvas is 240x320 whatever the
+# display (`hl5_core::portrait::CANVAS`). The boot log's
+# `portrait: 240x320 canvas, 111 guest word(s) relaid` line is the overlay
+# having checked all 111 original words and written them.
+#
+# Evidence, and how to read the run:
+#
+#   1. `portrait-field.png`: the belt is one row at the bottom with the keypad
+#      digit that fires each slot above it (1 3 7 9 * 0), `map`/`shop` sit in
+#      the bottom corners, and no joystick plate is drawn.
+#   2. The walk. `pad key:6` / `pad key:2` are the keypad's 6 and 2, which the
+#      pad layer turns into the game's own joystick in the field. `--count
+#      0x8d03c` (`WorkMoveHero` past its angle −1 gate) is 28 with the two
+#      `pad key` holds below and 0 with them deleted (2026-10-14).
+#
+# Key-driven on purpose — the cutscene's SKIP is `#` here, drawn as `#: SKIP`.
+# Do NOT add this to `ab_905.sh`: it is a different canvas.
+
+frames 700
+key select
+frames 90
+key select
+frames 120
+key select
+frames 120
+key select
+frames 150
+key select
+frames 150
+key select
+frames 250
+key 35
+frames 120
+key 35
+frames 90
+key 35
+frames 90
+key 35
+frames 90
+key 35
+frames 90
+key 35
+frames 90
+key 35
+frames 90
+key 35
+frames 90
+key 35
+frames 90
+key 35
+frames 90
+key select
+frames 60
+key select
+frames 60
+key select
+frames 60
+frames 200
+dump out/shot/portrait-field.png
+frames 30
+pad key:6 down
+frames 40
+dump out/shot/portrait-walk-right.png
+pad key:6 up
+frames 10
+pad key:2 down
+frames 40
+dump out/shot/portrait-walk-up.png
+pad key:2 up
+frames 20

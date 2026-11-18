@@ -1,0 +1,150 @@
+# Buff timers in real seconds and the buff rebalance (hl5_core::skilltime,
+# ANALYSIS.md 71).
+#
+#   cargo run -q -p hl5_probe -- --boot --storage out/bufftime
+#       --script tools_re/scripts/bufftime.txt --skill-time-hz 24 --buff-rebalance
+#
+# and without either flag for the shipped numbers, or with --skill-time-hz 24
+# alone for real seconds without the rebalance. Start from an empty storage:
+# the replay makes a new 워리어 in slot 1, the way expkill.txt does. Delete
+# out/bufftime-text.txt between runs — `skilltext` appends the guest's own
+# skill text to it (EUC-KR).
+#
+# A new character has no talents, so `learn` writes the rows a 특성 point or a
+# skill book would, and `belt` puts them on keys with the guest's own
+# HERO::SetHotKeyBelt. A belt slot holds the class's *action* number, which
+# `<CLASS>::GetRealSkillIndex` maps to a row through the table at HERO+0x2002 —
+# `skillmap` prints it.
+#
+# What to read off the `buffs` lines, ticks as the guest holds them (the guest
+# adds 1 to a duration):
+#
+#                       shipped     --skill-time-hz 24   + --buff-rebalance
+#   돌진 cooldown (ctl)  80          80                   80
+#   발악 buff slot       341         817                  1633
+#   발악 cooldown        10          24                   24
+#   전투태세 stance      341         817                  1633
+#   도발 SP spent        300         300                  600
+#   도발 cooldown        240         576                  1152
+#   도발 무적 slot       21          49                   97
+#
+# and 900 ticks later the shipped 발악 is gone while the others still run.
+# The text (`skilltext`): 발악 "34초" / "34초" / "68초"; 도발 "SP 30 · 24초 ·
+# 2초" / same / "SP 60 · 48초 · 4초". With --skill-time-hz the text of what
+# is NOT armed in real seconds shows real seconds instead (ANALYSIS.md 71.9):
+# 돌진 "8초" -> "3.3초", 고통 "4초 · 22초" -> "1.7초 · 9.2초", 포대 "20초 ·
+# 15초" -> "8.3초 · 6.3초", 그림자밟기 "0.5초 단축" -> "5%", 섬광탄 "30초" ->
+# "12.5초"; the buffs keep theirs.
+#
+# DO NOT ADD THIS TO `ab_905.sh`'s scene list: it exists for the counts.
+
+frames 700
+tap 200 200          # title: "Tap to Continue"
+frames 90
+tap 152 48           # 게임시작
+frames 20
+key select
+frames 120
+tap 200 68           # save slot 1
+frames 20
+key select
+frames 120
+tap 140 68           # class: 워리어
+frames 20
+key select
+frames 150
+key select
+frames 250
+tap 28 10            # SKIP
+frames 1020
+tap 28 10
+frames 90
+tap 28 10
+frames 90
+tap 28 10
+frames 90
+tap 28 10
+frames 90
+tap 28 10
+frames 90
+tap 28 10
+frames 90
+tap 28 10
+frames 90
+tap 28 10
+frames 90
+tap 28 10
+frames 90
+tap 28 10
+frames 90
+tap 28 10
+frames 90
+tap 28 10
+frames 90
+tap 240 200          # dismiss the quest popup (OK is on the right)
+frames 20
+key select
+frames 60
+
+learn 31 1           # 발악
+learn 13 1           # 전투태세
+learn 6 1            # 도발 (a skill book row)
+learn 1 1            # 돌진, the control: an attack skill
+skillmap             # warrior: action 16 -> row 31, 12 -> row 13, 8 -> row 6
+belt 0 0 16          # key '1' = action 16 = 발악
+belt 1 0 12          # key '3' = action 12 = 전투태세
+belt 2 0 8           # key '9' = action 8  = 도발
+belt 3 0 3           # key '*' = action 3  = 돌진
+skilltext 1 out/bufftime-text.txt   # 돌진: an attack skill's text
+keydown 42           # '*' = 돌진, while the hero still stands
+frames 2
+keyup 42
+frames 40
+buffs 1              # the control: cool[1] …/80 every way
+skilltext 31 out/bufftime-text.txt
+skilltext 6 out/bufftime-text.txt
+buffs 31
+keydown 49           # '1'
+frames 2
+keyup 49
+frames 40            # the cast motion runs before ProcHeroSkill applies it
+buffs 31
+keydown 51           # '3'
+frames 2
+keyup 51
+frames 40
+buffs 13
+sp 1000              # a new 워리어 has no SP; 도발 costs some
+buffs 6
+keydown 57           # '9'
+frames 2
+keyup 57
+frames 40
+buffs 6
+dump out/shot/bufftime-cast.png
+frames 600
+buffs 31
+frames 300
+buffs 31
+
+
+# The other classes' text, through the guest's own class change: 나이트
+# 무적 "SP 60 · 100초 · 30초", 긴급회복 "SP 60 · 50초" (cooldown not doubled),
+# 증오의문장 "SP 60 · 50초 · 60초"; 로그 긴급회피 "SP 20 · 50초 · 12초"
+# (cooldown not doubled), 호흡집중 "SP 40 · 60초 · 68초". Shipped: 무적
+# "SP 30 · 80초 · 15초", 긴급회복 "SP 30 · 50초", 긴급회피 "SP 10 · 50초 · 6초".
+class 3
+frames 60
+skilltext 42 out/bufftime-text.txt
+skilltext 27 out/bufftime-text.txt
+skilltext 13 out/bufftime-text.txt
+class 1
+frames 60
+skilltext 4 out/bufftime-text.txt
+skilltext 31 out/bufftime-text.txt
+skilltext 8 out/bufftime-text.txt    # 고통: attack cooldown and a debuff
+skilltext 41 out/bufftime-text.txt   # 그림자밟기: "#13초" became "#10%"
+class 2
+frames 60
+skilltext 7 out/bufftime-text.txt    # 포대: the literal "15초" -> "6.3초"
+skilltext 38 out/bufftime-text.txt   # 섬광탄: a debuff

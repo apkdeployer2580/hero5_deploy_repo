@@ -1,0 +1,8 @@
+[package]
+name = "hl5_core"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[dependencies]
+arm32_cpu.workspace = true

@@ -1,0 +1,152 @@
+# Online run: new game, skip the opening, land in gameplay, open the menu.
+#
+#   python tools_re/testserver.py --port 7301
+#   cargo run -q -p hl5_probe -- --boot --server 127.0.0.1:7301 #       --script tools_re/scripts/ingame.txt --film out/film
+#
+# See newgame-online.txt for the tap-then-select rule and the measured menu
+# geometry. Two things this script adds:
+#
+#   * The opening cutscene has a SKIP button at (28, 10) and it works on the
+#     first tap -- no confirm, no second select. It drops straight to the
+#     loading screen.
+#   * One of that loading screen's rotating tips is the answer to "why is the
+#     cash shop unreachable": 캐쉬 상점 이용을 위해서는 최소 1회 저장을 해야
+#     합니다 -- the shop needs the game saved at least once.
+
+frames 700
+tap 200 200          # title: "Tap to Continue"
+frames 90
+tap 152 48           # 게임시작
+frames 20
+key select
+frames 120
+tap 200 68           # save slot 1
+frames 20
+key select
+frames 120
+tap 140 68           # class: 워리어
+frames 20
+key select
+frames 150
+key select
+frames 250
+dump out/shot/90-cutscene.png
+
+tap 28 10            # SKIP
+frames 60
+dump out/shot/91-loading.png
+frames 120
+dump out/shot/92-ingame.png
+frames 120
+dump out/shot/93-ingame.png
+frames 120
+dump out/shot/94-ingame.png
+frames 120
+dump out/shot/95-ingame.png
+frames 120
+dump out/shot/96-ingame.png
+frames 120
+dump out/shot/97-ingame.png
+frames 120
+dump out/shot/98-ingame.png
+frames 120
+dump out/shot/99-ingame.png
+
+# SKIP ends one scripted event, not the whole opening. Keep pressing it.
+tap 28 10
+frames 90
+dump out/shot/a01-skip.png
+tap 28 10
+frames 90
+dump out/shot/a02-skip.png
+tap 28 10
+frames 90
+dump out/shot/a03-skip.png
+tap 28 10
+frames 90
+dump out/shot/a04-skip.png
+tap 28 10
+frames 90
+dump out/shot/a05-skip.png
+tap 28 10
+frames 90
+dump out/shot/a06-skip.png
+tap 28 10
+frames 90
+dump out/shot/a07-skip.png
+tap 28 10
+frames 90
+dump out/shot/a08-skip.png
+tap 28 10
+frames 90
+dump out/shot/a09-skip.png
+tap 28 10
+frames 90
+dump out/shot/a10-skip.png
+tap 28 10
+frames 90
+dump out/shot/a11-skip.png
+tap 28 10
+frames 90
+dump out/shot/a12-skip.png
+
+# Gameplay at last. First dismiss the quest popup: its bottom bar is
+# 보상보기 (view reward) on the left and OK on the right, so OK is near
+# (240, 200) -- a tap at 200 lands on 보상보기 and the popup stays.
+tap 240 200
+frames 20
+key select
+frames 60
+dump out/shot/c0-hud.png
+
+# The HUD's top bar. Measured off a dump rather than eyeballed -- the three
+# labels are the only near-white runs in the top 20 rows:
+#     map  x 153..169 (centre 161)
+#     shop x 200..222 (centre 211)
+#     save x 250..272 (centre 261)     all at y ~= 11
+# Save first: the loading-screen tip says the cash shop needs the game saved
+# at least once.
+tap 261 11           # save
+frames 90
+dump out/shot/c1-save.png
+tap 240 200
+frames 20
+key select
+frames 90
+dump out/shot/c2-after-save.png
+
+tap 211 11           # shop
+frames 150
+dump out/shot/c3-shop.png
+frames 60
+dump out/shot/c4-shop.png
+
+# The catalogue itself is local: CashShop::LoadCashShopData reads it out of
+# the VFS (§4.1), so opening the shop puts nothing on the wire. A purchase
+# does -- PacketWrite_Shop subcmd 2, answered with subcmd 4, then granted on
+# subcmd 5 (§6.5).
+#
+# From here on it is `select` only. A tap inside a modal lands on the shop
+# grid behind it and quietly changes which item is being bought, which reads
+# as "the confirm button does nothing"; `select` always activates whatever the
+# modal has highlighted.
+key select
+frames 120
+dump out/shot/c5-buy1.png
+key select
+frames 120
+dump out/shot/c6-buy2.png
+key select
+frames 150
+dump out/shot/c7-buy3.png
+key select
+frames 200
+dump out/shot/c8-buy4.png
+key select
+frames 250
+dump out/shot/c9-buy5.png
+frames 250
+dump out/shot/ca-after.png
+key select
+frames 200
+dump out/shot/cb-after.png

@@ -1,0 +1,113 @@
+# 해상도 — the restart prompt a change raises, and both of its answers.
+#
+#   rm -rf out/res-storage
+#   cargo run -q -p hl5_probe -- --boot --storage out/res-storage \
+#       --screen-option --screen 2340x1080 --boot-mode skip-network \
+#       --count MC_knlExit --script tools_re/scripts/resolution-restart.txt
+#
+# Navigation is `option.txt`'s, and its warnings apply: the first key after
+# the title tap only wakes the highlight, so the centre cell is
+# right, right, down.
+#
+# What this one is for is the popup. `screen::ask_restart` raises the guest's
+# own 게임종료 dialog (id 8) with a body of its own, and the guest answers it:
+# 예 -> MC_knlExit, 아니오 -> the popup closes and the row keeps its new value.
+# So the acceptance is two numbers and two pictures, not byte identity — this
+# is a deliberate behaviour change and does NOT belong in `ab_905.sh`.
+
+frames 60
+tap 200 145        # the offline "server is not available" popup, if it is up
+frames 700         # rating screen, EA logo, opening text, title
+
+tap 200 200        # "Tap to Continue"
+frames 90
+
+key right          # swallowed: the first key only wakes the highlight
+frames 20
+key right          # -> 익스퍼트
+frames 20
+key down           # -> 환경설정
+frames 20
+key select
+frames 60
+
+# Eleven downs to the twelfth row (해상도, under 배치변경; 데이터 관리 is not
+# shown).
+key down
+frames 8
+key down
+frames 8
+key down
+frames 8
+key down
+frames 8
+key down
+frames 8
+key down
+frames 8
+key down
+frames 8
+key down
+frames 8
+key down
+frames 8
+key down
+frames 8
+key down
+frames 20
+dump out/shot/res-row.png
+
+# --- A -> B: the prompt, answered 아니오 -------------------------------------
+#
+# 예 is highlighted when the popup opens, so RIGHT moves to 아니오 and SELECT
+# takes it. The row must still read B afterwards: the file is written before
+# the question is asked, so declining the restart declines only the restart.
+key right
+frames 20
+dump out/shot/res-prompt-b.png
+key right
+frames 8
+dump out/shot/res-prompt-no-highlighted.png
+key select
+frames 30
+dump out/shot/res-after-no.png
+
+# --- B -> C: the same, so that two changes ask twice -------------------------
+key right
+frames 20
+key right
+frames 8
+key select
+frames 30
+dump out/shot/res-after-no-c.png
+
+# --- C -> P (세로): asks too, answered 아니오 --------------------------------
+key right
+frames 20
+key right
+frames 8
+key select
+frames 30
+dump out/shot/res-after-no-p.png
+
+# --- P -> A: NO prompt ------------------------------------------------------
+#
+# A is the mode this process's canvas was built from, so the picture on the
+# screen is already the one the row names and there is nothing to apply.
+# `screen::ask_restart` returns without raising anything: the shot below has to
+# be the plain list, and the prompt count has to still be 3.
+key right
+frames 30
+dump out/shot/res-back-to-applied.png
+
+# --- A -> B again, answered 예 ----------------------------------------------
+#
+# SELECT with the popup as it opens takes the first button. The guest's own
+# arm for id 8 clears the popup and calls MC_knlExit(0), which on a phone is
+# `CletEntry.exitApp` and the window closing; here it is `--count MC_knlExit`
+# reading 1 and the summary line saying the guest asked to exit.
+key right
+frames 20
+key select
+frames 30
+dump out/shot/res-after-yes.png

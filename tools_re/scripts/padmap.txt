@@ -1,0 +1,117 @@
+# 환경설정 with the host's three rows (화면필터 / 패드키 / 해상도) and the
+# 패드키 row's key-mapping screen (`hl5_core::options`, `hl5_core::padmap`).
+#
+#   cargo run -q -p hl5_probe -- --boot --storage out/padmap-storage \
+#       --screen-option --pad --screen 2340x1080 --boot-mode skip-network \
+#       --script tools_re/scripts/padmap.txt
+#
+# The list is twelve rows: the guest's nine with 화면필터 under 화면효과
+# (display 5), 패드키 under 터치방식 (display 9) and 해상도 last (11). The
+# opening is `option.txt`'s. Coordinates are the 585x270 canvas.
+#
+# Evidence:
+#   padmap-list-top.png      the first six rows, 화면필터 ON in slot 5
+#   padmap-row9.png          cursor on 패드키 (기본), the window scrolled
+#   padmap-ask.png           the popup: 패드키 설정을 진행하시겠습니까?
+#   padmap-screen.png        the mapping screen in the list's place, badges on
+#   padmap-selected.png      퀵1 tapped (cursor plate)
+#   padmap-assigned.png      Y pressed: 퀵1 wears the top face badge, 퀵2 none
+#   padmap-closed.png        완료: back on the list, 패드키 = 커스텀
+#   padmap-filter-off.png    화면필터 toggled to OFF
+#   padmap-no.png            the question answered 아니오: 패드키 stays 기본
+# and the summary's `option rows` line: 1 screen opened, 1 binding made,
+# 12 override(s) (the whole table is written), `--count` nothing.
+#
+# NOT for `ab_905.sh`: the rows are a deliberate behaviour change.
+
+frames 60
+tap 200 145
+frames 700
+tap 200 200
+frames 90
+key right
+frames 20
+key right
+frames 20
+key down
+frames 20
+key select
+frames 60
+dump out/shot/padmap-list-top.png
+
+# Nine downs: 패드키 is display 9.
+key down
+frames 10
+key down
+frames 10
+key down
+frames 10
+key down
+frames 10
+key down
+frames 10
+key down
+frames 10
+key down
+frames 10
+key down
+frames 10
+key down
+frames 20
+dump out/shot/padmap-row9.png
+
+# 기본 -> 커스텀 asks.
+key right
+frames 25
+dump out/shot/padmap-ask.png
+pad-connect
+key select          # 예: the first button
+frames 25
+dump out/shot/padmap-screen.png
+
+# Tap 퀵1 (the arc's first button at (425,222) on this canvas), then press
+# the top face button (Y, keycode 100): 퀵1 is Y's now, and 퀵2 — Y's old
+# control — is nobody's.
+tap 440 237
+frames 10
+dump out/shot/padmap-selected.png
+pad 100
+frames 10
+dump out/shot/padmap-assigned.png
+
+# 완료 at the grid's last cell (88,118)-(148,134).
+tap 118 126
+frames 25
+dump out/shot/padmap-closed.png
+
+# Up four: 화면필터 at display 5. RIGHT toggles it.
+key up
+frames 10
+key up
+frames 10
+key up
+frames 10
+key up
+frames 15
+key right
+frames 20
+dump out/shot/padmap-filter-off.png
+key right
+frames 10
+
+# Back to 패드키: 커스텀 -> 기본, then 기본 -> 커스텀 answered 아니오.
+key down
+frames 10
+key down
+frames 10
+key down
+frames 10
+key down
+frames 15
+key right            # 커스텀 -> 기본
+frames 15
+key right            # 기본 -> ask
+frames 25
+key back             # 아니오
+frames 20
+dump out/shot/padmap-no.png

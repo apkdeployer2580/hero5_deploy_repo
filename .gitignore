@@ -1,0 +1,69 @@
+# --- 원본 라이선스 데이터 -------------------------------------------------
+# 빌드에 필요한 것은 payload/ 에 들어 있다. 원본 APK 통째와, 거기 딸려 온 IDA
+# 데이터베이스는 넣지 않는다.
+/heroesLore5.apk
+/payload/*.idb
+
+# --- 빌드 산출물 ------------------------------------------------------------
+/target
+/android_app/.gradle
+/android_app/build
+/android_app/app/build
+/android_app/local.properties
+
+# 빌드 스크립트가 gradle 실행 전마다 payload/ 에서 복사해 넣는다.
+/android_app/app/src/main/assets/
+/android_app/app/src/main/jniLibs
+/android_app/app/src/main/res/mipmap-*/
+
+# --- 서명 / 키 --------------------------------------------------------------
+*.jks
+*.keystore
+keystore.properties
+# 서버 배포용 SSH 키. 저장소 밖(<keystore>)에 두는 것이 규칙이지만,
+# 배포하다 보면 옆에 복사해 두기 쉽다. 한 번 push 되면 되돌릴 수 없다.
+*.pem
+*.p12
+
+# --- 프로브 프레임 덤프 -----------------------------------------------------
+# --dump 는 MB 단위 PNG 를 떨구고, A/B 비교는 수십 개를 남긴다.
+/out
+/out_*
+
+# --- 배포용 APK -------------------------------------------------------------
+# `build_android.ps1 -Release` 가 `dist/hero5-v<ver>-vc<code>.apk` 로 떨군다.
+# 한 벌이 22.7 MB 라 APK 자체는 넣지 않고, 무엇을 배포했는지와 서명 지문만
+# 문서로 남긴다. (hero3 / hero4 는 APK 를 같이 커밋한다 — 여기서도 그러려면
+# 아래 첫 줄을 지우면 된다.)
+/dist/*
+!/dist/README.md
+
+# --- 도구 -------------------------------------------------------------------
+__pycache__/
+
+# --- 에디터 / OS ------------------------------------------------------------
+.idea/
+.vscode/
+*.iml
+Thumbs.db
+desktop.ini
+.DS_Store
+
+# --- Claude Code, 머신 로컬 -------------------------------------------------
+.claude/settings.local.json
+
+# --- 에이전트 작업 흔적 -----------------------------------------------------
+# 로컬 설정과, 워크플로가 만든 임시 git worktree(저장소 전체 사본)가 들어간다.
+/.claude/
+
+# 실제 payload/ 가 있어야만 도는 임시 진단 시험. 없는 클론에서 `cargo test` 가
+# 깨지므로 저장소에 넣지 않는다.
+/hl5_core/tests/_tmp_*.rs
+
+# --- 도감 사이트 파이프라인 (tools_re/codex) --------------------------------
+# 배포된 페이지를 템플릿으로 내려받아(codex_live) 다시 쓴다(codex_new). 900 KB
+# 짜리 생성물이고 정본은 배포처다 — 저장소에 들어가면 다음 사람이 낡은 사본을
+# 템플릿으로 쓴다.
+/tools_re/codex/codex_live.html
+/tools_re/codex/codex_new.html
+/tools_re/codex/deploy/

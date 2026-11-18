@@ -1,0 +1,141 @@
+# 컷신의 아바타: the hero's and 렌's NPC-body copies wear the wardrobe
+# (`hl5_core::npcbody`).
+#
+#   cargo run -q -p hl5_probe -- --boot --avatar --script tools_re/scripts/avatar.txt
+#   cargo run -q -p hl5_probe -- --boot --avatar --script tools_re/scripts/spirit-avatar.txt
+#   cargo run -q -p hl5_probe -- --boot --avatar --script tools_re/scripts/avatar-cutscene.txt
+#
+# The first two leave `<storage>/hl5_avatar.txt` with slot 0 dressed
+# (`0 0 0=100001 1=110011 4=110024 s=130010`: 마법사 모자, astra 01's body,
+# astra 02's sword, 렌's outfit 1); this one starts a new game in that slot
+# and lets the opening story run instead of skipping it, tapping the dialogue
+# on every 45 frames. 400x240 — do NOT add `--screen`.
+#
+# A scene does not move the hero's own sprite: `Event_PlayerChange(1)` builds
+# him anew as an NPC body (`npc_g.dat` record 0) through `Map::NpcPathSet`,
+# which never passes `SetLoadImgPath`. That happens here at the dark "voice"
+# scene (frame ~3650, after the laboratory dialogue). 렌 is an NPC in scenes
+# too (record 1, her own sheets 042/025); no replay reaches one with her in
+# it, so `npcbody 1` loads her record through `QuestMgr::LoadNpcBody`, the
+# fourth caller of the same function.
+#
+# Evidence:
+#   1. avatar-scene-hero.png: the figure on the dark screen (around x 191..212,
+#      y 76..120) wears the wizard hat and the astra coat. Without the hook
+#      every one of these frames is byte-identical except this box, where the
+#      teal-haired hero in his equipment stands instead.
+#   2. The summary line says `3 scene body(ies) dressed` for the hero (the
+#      laboratory's NpcCreate of record 0, the dark scene's PlayerChange(1),
+#      and `npcbody 0`) and `1 scene body(ies) dressed` for 렌; the log has
+#      one `avatar: ... scene body dressed` line per each.
+#   3. `npcbody 1` prints `/c/sp/img0/321.mgr / /c/sp/img1/321.mgr` — her
+#      outfit's sheets, not 042/025. `npcbody 0` prints the costume sheets
+#      for the hero's head and body (`img0/256` the hat, `img1/301` the
+#      astra coat), not the equipment's.
+#
+# Do NOT add this to `ab_905.sh`.
+
+frames 700
+tap 200 200          # title: "Tap to Continue"
+frames 90
+tap 152 48           # 게임시작
+frames 20
+key select
+frames 120
+tap 200 68           # save slot 1
+frames 20
+key select
+frames 120
+tap 140 68           # class: 워리어
+frames 20
+key select
+frames 150
+key select
+frames 250
+
+tap 28 10            # SKIP the first opening scene; the laboratory follows
+frames 60
+frames 240
+tap 200 200
+frames 45
+tap 200 200
+frames 45
+tap 200 200
+frames 45
+tap 200 200
+frames 45
+tap 200 200
+frames 45
+tap 200 200
+frames 45
+tap 200 200
+frames 45
+tap 200 200
+frames 45
+tap 200 200
+frames 45
+tap 200 200
+frames 45
+tap 200 200
+frames 45
+tap 200 200
+frames 45
+tap 200 200
+frames 45
+tap 200 200
+frames 45
+tap 200 200
+frames 45
+tap 200 200
+frames 45
+tap 200 200
+frames 45
+tap 200 200
+frames 45
+tap 200 200
+frames 45
+tap 200 200
+frames 45
+tap 200 200
+frames 45
+tap 200 200
+frames 45
+tap 200 200
+frames 45
+tap 200 200
+frames 45
+tap 200 200
+frames 45
+tap 200 200
+frames 45
+tap 200 200
+frames 45
+tap 200 200
+frames 45
+tap 200 200
+frames 45
+tap 200 200
+frames 45
+tap 200 200
+frames 45
+tap 200 200
+frames 45
+tap 200 200
+frames 45
+tap 200 200
+frames 45
+tap 200 200
+frames 45
+tap 200 200
+frames 45
+tap 200 200
+frames 45
+tap 200 200
+frames 45
+tap 200 200
+frames 45
+tap 200 200
+frames 45
+dump out/shot/avatar-scene-hero.png
+npcbody 1            # 렌's record, through QuestMgr::LoadNpcBody
+npcbody 0            # the player's record, the same way

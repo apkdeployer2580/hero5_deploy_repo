@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Launcher label. The original APK's application-label is 영웅서기5;
+         keeping the name means a player recognises what they are opening. -->
+    <string name="app_name">영웅서기5</string>
+</resources>

@@ -1,0 +1,91 @@
+# 공용창고 입출고 — the frames the listing alone does not exercise.
+#
+#   S=out/wh-storage           # must already hold a save; see warehouse.txt
+#   cargo run -q -p hl5_probe -- --boot --free-shop --offline-menus \
+#       --storage $S --script tools_re/scripts/warehouse_move.txt
+#
+# warehouse.txt proves the menu *opens*; this one drives the two things that
+# make it a warehouse. It exists to be watched rather than to assert: the
+# request payload of every category-4 frame is logged as hex by
+# `localserver.rs`, so running this and reading the log is how the deposit and
+# withdrawal formats get pinned to observed bytes instead of to a reading of
+# the disassembly alone (ANALYSIS.md §25 — the shop's wire format was recovered
+# exactly this way, after two guesses that looked right and were not).
+#
+# The prefix as far as the grid is warehouse.txt's, unchanged.
+
+frames 700
+tap 200 200          # title: "Tap to Continue"
+frames 90
+
+key right
+frames 30
+key right
+frames 30
+key right
+frames 30
+key select           # 창고접속
+frames 150
+
+key select           # 슬롯선택 -> slot 1
+frames 90
+key select           # 창고 접속하시겠습니까? -> 예
+frames 120
+
+frames 120
+key select           # nickname popup
+frames 90
+key select           # offline notice
+frames 120
+dump out/shot/m0-netmenu.png
+
+# 창고관리 is the middle-left cell, but the highlight does not start on
+# 판매거래소 until that cell has been entered and left once — warehouse.txt
+# encodes the same dance, and skipping it lands here in 판매거래소 instead
+# (measured: 2/3 twice and a 판매거래소 screen where the grid should be).
+key select           # 판매거래소
+frames 150
+key select           # its offline popup
+frames 60
+key back
+frames 120
+
+key down
+frames 30
+key select           # 창고관리
+frames 150
+dump out/shot/m1-storage.png
+
+# The grid's two soft buttons are labelled `0. 아이템정리` and `3. 싱글가방`,
+# and the numbers are literal: they are WIPI number keys, not tap targets.
+# Tapping them does nothing (measured — the screen is byte-identical before and
+# after). `wipi_key` only names the six navigation keys, so the digits go in as
+# their ASCII codes, which is what the WIPI keymap uses.
+key 51               # '3' — 싱글가방
+frames 120
+dump out/shot/m2-bag.png
+
+# Touch the cell rather than walking to it. `TouchStorageUI` puts the cursor
+# on whatever cell was pressed and raises the same popup SELECT would, and it
+# skips the two-level focus (tab row, then grid) that makes a key walk depend
+# on where the cursor happened to be left.
+tap 252 74           # row 1, the stack of five consumables
+frames 90
+dump out/shot/m3-picked.png
+
+# The popup that follows is 14 (올리기 / 버리기); 올리기 is option 0. A stack
+# bigger than one brings a quantity popup next, then the confirm — so this is
+# the same key several times with a dump between, and the log says which press
+# turned into a packet.
+key select
+frames 90
+dump out/shot/m4-menu.png
+key select
+frames 90
+dump out/shot/m5-qty.png
+key select
+frames 120
+dump out/shot/m6-confirm.png
+key select
+frames 150
+dump out/shot/m7-after.png

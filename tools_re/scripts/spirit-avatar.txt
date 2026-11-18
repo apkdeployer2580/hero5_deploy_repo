@@ -1,0 +1,103 @@
+# 렌의 아바타: the `*아바타` button on the 정령 page, and her wardrobe.
+#
+#   cargo run -q -p hl5_probe -- --boot --avatar --script tools_re/scripts/spirit-avatar.txt
+#
+# 400x240 — do NOT add `--screen`. The page's origin is x0 = halfW-0x58,
+# y0 = halfH-0x66 = (112, 18); the button is at (x0, y0+0xa2) like the
+# character page's, her list is six rows at (x0+0x42, y0+0x2c) every 18 px
+# (`hl5_core::spirit_avatar`).
+#
+# A new game has no spirit: the story hands 렌 over far past what a replay
+# reaches, so `spirit 3` brings her out through the guest's own
+# `EventProc::Event_PlayerAppearSpirit` (state 3 = out).
+#
+# Evidence:
+#   1. spirit-page.png: `*아바타` under the equipment row of 기본/장비.
+#   2. spirit-open.png: the list right of her, her side and back below her.
+#   3. spirit-worn.png: row 1 worn on release — the guest's figure on the page
+#      is in the outfit (ChangeSprImg on her own image), `<storage>/
+#      hl5_avatar.txt` has `s=` on slot 0.
+#   4. spirit-field.png: she follows the hero in it.
+#   5. spirit-own.png: 기본 외형 puts her own sheets back.
+#
+# Do NOT add this to `ab_905.sh`.
+
+frames 700
+tap 200 200          # title: "Tap to Continue"
+frames 90
+tap 152 48           # 게임시작
+frames 20
+key select
+frames 120
+tap 200 68           # save slot 1
+frames 20
+key select
+frames 120
+tap 140 68           # class: 워리어
+frames 20
+key select
+frames 150
+key select
+frames 250
+
+tap 28 10            # SKIP out of the opening cutscene
+frames 60
+frames 240
+
+tap 28 10
+frames 90
+tap 28 10
+frames 90
+tap 28 10
+frames 90
+tap 28 10
+frames 90
+tap 28 10
+frames 90
+tap 28 10
+frames 90
+tap 28 10
+frames 90
+tap 28 10
+frames 90
+tap 28 10
+frames 90
+tap 28 10
+frames 90
+tap 28 10
+frames 90
+tap 28 10
+frames 90
+
+tap 240 200
+frames 20
+key select
+frames 60
+key back
+frames 60
+key select
+frames 60
+key back             # character page -> the menu grid
+frames 30
+spirit 3             # 렌 joins
+frames 10
+tap 145 160          # 정령
+frames 10
+key select
+frames 30
+dump out/shot/spirit-page.png
+tap 147 188          # *아바타
+frames 20
+dump out/shot/spirit-open.png
+press 210 89         # row 1
+frames 2
+release 210 89
+frames 30
+dump out/shot/spirit-worn.png
+tap 147 188          # *아바타 again: close
+frames 10
+key back
+frames 30
+key back
+frames 60
+dump out/shot/spirit-field.png

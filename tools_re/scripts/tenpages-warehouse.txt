@@ -1,0 +1,102 @@
+# 공용창고 10페이지 — the chests in two columns and the grid moved right, in
+# the warehouse and in its view of the bag (ANALYSIS.md §65.5). Needs a save
+# in slot 1 (tenpages-fill.txt makes one with 160 items) and a full warehouse:
+#
+#   S=out/tenpages            # after tenpages-fill.txt
+#   python tools_re/whfill.py $S --all-equip   # every cell equipment: a 13 KB 4/6,
+#                                               # past the shipped 8 KB receive
+#                                               # buffer (ANALYSIS.md §65.14)
+#   cargo run -q -p hl5_probe -- --boot --ten-pages --free-shop --offline-menus \
+#       --storage $S --script tools_re/scripts/tenpages-warehouse.txt
+#
+# The first half walks with keys only (tab column → right column → grid →
+# column 3), so the same replay on a build without the grid move reaches the
+# same states — that is how the moved grid was compared pixel for pixel with
+# the shipped one. The second half taps the moved cells (x0 + 56 + 29 c,
+# x0 = 112, y0 = 18) and a chest of the right column.
+#
+# Expected: the orange cursor box on the tapped cell in each tw-*-cN.png, page 9
+# open in tw-*-tab9.png, `cell table(s) moved` > 0.
+# DO NOT ADD THIS TO `ab_905.sh`: it needs `--ten-pages`.
+
+frames 700
+tap 200 200          # title: "Tap to Continue"
+frames 90
+key right            # (the first key after the title tap moves nothing)
+frames 30
+key right
+frames 30
+key right
+frames 30
+key select           # 창고접속
+frames 150
+key select           # 슬롯선택 -> slot 1
+frames 90
+key select           # 창고 접속하시겠습니까? -> 예
+frames 240
+key select           # nickname popup
+frames 90
+key select           # offline notice
+frames 120
+key select           # 판매거래소 (the highlight starts here; see warehouse_move.txt)
+frames 150
+key select           # its offline popup
+frames 60
+key back
+frames 120
+key down
+frames 30
+key select           # 창고관리
+frames 150
+dump out/shot/tw-st0.png
+key right            # tab 1 -> tab 6
+frames 20
+dump out/shot/tw-st-tab6.png
+key right            # into the grid
+frames 20
+dump out/shot/tw-st-k0.png
+key right
+frames 10
+key right
+frames 10
+key right            # column 3: the right-aligned name
+frames 20
+dump out/shot/tw-st-k3.png
+key 51               # '3' — 싱글가방
+frames 120
+dump out/shot/tw-bag0.png
+key right            # tab 1 -> tab 6
+frames 20
+dump out/shot/tw-bag-tab6.png
+key right            # into the grid
+frames 20
+dump out/shot/tw-bag-k0.png
+key right
+frames 10
+key right
+frames 10
+key right
+frames 20
+dump out/shot/tw-bag-k3.png
+
+# Taps from here on: a build without the grid move lands elsewhere.
+tap 181 103          # column 0, row 1
+frames 20
+dump out/shot/tw-bag-c0.png
+tap 277 132          # column 3, row 2 — past the shipped grid
+frames 20
+dump out/shot/tw-bag-c3.png
+tap 152 140          # the right column's fourth chest: page 9
+frames 20
+dump out/shot/tw-bag-tab9.png
+key 51               # '3' — back to 창고
+frames 120
+tap 210 161          # column 1, row 3
+frames 20
+dump out/shot/tw-st-c1.png
+tap 268 74           # column 3, row 0
+frames 20
+dump out/shot/tw-st-c3.png
+tap 152 140          # page 9
+frames 20
+dump out/shot/tw-st-tab9.png

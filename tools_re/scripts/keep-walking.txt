@@ -1,0 +1,145 @@
+# Walk and attack at the same time — the `--keep-walking` hook.
+#
+# `HERO::KeyRelease` (0x9BDCC) asks `StaticUtil::NumKeyToNaviKey` which
+# navigation key was released and then overwrites the answer one instruction
+# later (`mov r1,#0` at 0x9BDDC). It goes on to clear all four movement flags
+# with `SetMoveKeyChk(0..3, 0)` and, if the hero was walking, to plant the
+# standing animation. So releasing OK — or a skill, or the combo key — ends the
+# walk even though the direction is still held down. ANALYSIS.md 37.7.
+#
+# This script holds a direction and attacks four times underneath it. Run it
+# both ways against the same binary:
+#
+#   cargo run -q -p hl5_probe -- --boot --storage out/kw-off-storage \
+#       --script tools_re/scripts/keep-walking.txt \
+#       --count _ZN4HERO13SetMoveKeyChkEah --count 0x9be74
+#   cargo run -q -p hl5_probe -- --boot --storage out/kw-on-storage --keep-walking \
+#       --script tools_re/scripts/keep-walking.txt \
+#       --count _ZN4HERO13SetMoveKeyChkEah --count 0x9be74
+#
+# Two counters, because the function does two separable things and **they do not
+# affect the same classes**:
+#
+#   `_ZN4HERO13SetMoveKeyChkEah`  the four flag writes. The hook suppresses
+#       exactly four per non-direction release, so the difference must be
+#       4 x (the number of OK releases that reached `HERO::KeyRelease`).
+#       Measured: 28 with the hook off, 4 with it on — and the 4 that remain
+#       are the one `keyup left`, which the hook declines. That is also the
+#       reason the 1,241-frame A/B stays byte-identical.
+#
+#   `0x9be74`  the `bl HERO::SetStandMotion` inside `HERO::KeyRelease`, reached
+#       only when `CHAR::GetMainState()` says the hero was **walking**. A tap
+#       attack never hits this (state is 2 at release); the stand the player
+#       sees is `HERO::SetStandMotion` itself, from the attack-end path, and
+#       that is the second hook (ANALYSIS.md §38.8). This counter is still
+#       the KeyRelease-while-walking half.
+#
+# The flags matter to fewer classes than ANALYSIS.md 37.7 implies, which is
+# worth knowing before reading these numbers. `HERO::IsMoveKeyChk` (0x88970)
+# has exactly two callers — `GUNNER::Proc+0x228` and `KNIGHT::Proc+0x210` — and
+# `HERO::IsMoveKeyNone` (0x88980) has none at all; a census of every access at
+# displacement 0x1d05..0x1d08 across 100% of `.text` finds no inlined reader
+# either. So for a WARRIOR or a ROGUE, clearing the flags is dead code and
+# `SetStandMotion` is the whole bug. This script plays a warrior, which is why
+# the second counter is the one to read.
+#
+# That is also why the attack is `keydown` / `frames` / `keyup` rather than
+# `key`: `key` lifts OK one frame after pressing it, while the hero is still in
+# the attack motion, so `GetMainState()` is not 1 and the walking branch is
+# never taken. Waiting for the attack to finish first is what a player's thumb
+# does anyway.
+#
+# The prologue is `ingame.txt`'s, up to the point where the quest popup is
+# dismissed and the touch UI is on screen.
+
+frames 700
+tap 200 200          # title: "Tap to Continue"
+frames 90
+tap 152 48           # 게임시작
+frames 20
+key select
+frames 120
+tap 200 68           # save slot 1
+frames 20
+key select
+frames 120
+tap 140 68           # class: 워리어
+frames 20
+key select
+frames 150
+key select
+frames 250
+
+tap 28 10            # SKIP the opening cutscene
+frames 60
+frames 1080
+
+# SKIP ends one scripted event, not the whole opening. Keep pressing it.
+tap 28 10
+frames 90
+tap 28 10
+frames 90
+tap 28 10
+frames 90
+tap 28 10
+frames 90
+tap 28 10
+frames 90
+tap 28 10
+frames 90
+tap 28 10
+frames 90
+tap 28 10
+frames 90
+tap 28 10
+frames 90
+tap 28 10
+frames 90
+tap 28 10
+frames 90
+tap 28 10
+frames 90
+
+# Gameplay. Dismiss the quest popup: OK is the right-hand button.
+tap 240 200
+frames 20
+key select
+frames 60
+dump out/shot/kw-00-hud.png
+
+# ---- hold a direction, then attack under it --------------------------------
+#
+# `keydown` / `keyup` rather than `key`, so the direction is genuinely held
+# across the attacks instead of being pressed and released around each one.
+keydown left
+frames 40
+dump out/shot/kw-01-walking.png
+
+keydown select       # attack
+frames 30            # ...let it finish, so the hero is walking again
+keyup select         # ...and lift OK while walking: this is the bug
+frames 40
+dump out/shot/kw-02-after-attack.png
+keydown select
+frames 30
+keyup select
+frames 40
+dump out/shot/kw-03-after-attack.png
+keydown select
+frames 30
+keyup select
+frames 40
+dump out/shot/kw-04-after-attack.png
+keydown select
+frames 30
+keyup select
+frames 40
+dump out/shot/kw-05-after-attack.png
+
+# The direction's own release: this one must stop the walk in both runs,
+# because it is a navigation key and the hook declines.
+keyup left
+frames 40
+dump out/shot/kw-06-standing.png
+frames 40
+dump out/shot/kw-07-standing.png

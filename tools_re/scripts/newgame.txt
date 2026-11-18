@@ -1,0 +1,34 @@
+# Boot -> intro -> title -> menu -> class select.
+#
+# This is the A/B against docs/reference/original-s9-02-class-select.png: the
+# same screen, reached the same way, on the same dead backend.
+
+frames 60
+tap 200 145        # "server is not available" popup -> OK
+frames 700         # rating screens, EA logo, opening text, title
+
+dump out/shot/20-title.png
+tap 200 200        # "Tap to Continue"
+frames 90
+dump out/shot/21-menu.png
+
+tap 200 100
+frames 90
+dump out/shot/22.png
+
+key select
+frames 90
+dump out/shot/23.png
+
+key down
+frames 30
+key select
+frames 90
+dump out/shot/24.png
+
+# Match the answer key's state: the S9 capture has 로그 highlighted, so select
+# the same tile before the A/B. Anything left over after that is rendering,
+# not game state.
+tap 255 68
+frames 30
+dump out/shot/25-class-rogue.png

@@ -1,0 +1,75 @@
+# 가방 10페이지 — the chests in two columns and the grid moved right
+# (ANALYSIS.md §65.5). Needs the 160-item save `tenpages-fill.txt` makes:
+#
+#   S=out/tenpages            # after tenpages-fill.txt
+#   cargo run -q -p hl5_probe -- --boot --ten-pages --storage $S \
+#       --script tools_re/scripts/tenpages-grid.txt
+#
+# Every tap below is on the *moved* grid (cells at x0 + 56 + 29 c, 400x240
+# canvas: x0 = 112, y0 = 18) or on a chest of the right column, in the NPC
+# sale screen and then the in-game bag. The first tap of each screen is on
+# column 3 at x0 + 165, which the shipped grid does not reach (it ends at
+# x0 + 157), so a cursor box there in tg-*-c3.png is the moved hit-test.
+#
+# Expected: the orange cursor box on the tapped cell in each tg-*-cN.png, the
+# tab under the tapped chest open in tg-*-tab9.png, and
+# `ten pages ... N chest(s) moved, M cell table(s) moved` with M > 0.
+# DO NOT ADD THIS TO `ab_905.sh`: it needs `--ten-pages`.
+
+frames 700
+tap 200 200          # title
+frames 90
+tap 152 48           # 게임시작
+frames 20
+key select
+frames 120
+tap 200 68           # slot 1 (has a save)
+frames 20
+key select
+frames 400
+
+# 판매: the NPC sale screen, the same panel.
+npc-menu 2
+frames 40
+dump out/shot/tg-sale0.png
+tap 277 103          # column 3, row 1 — past the shipped grid
+frames 20
+dump out/shot/tg-sale-c3.png
+tap 181 103          # column 0, row 1
+frames 20
+dump out/shot/tg-sale-c0.png
+tap 210 132          # column 1, row 2
+frames 20
+dump out/shot/tg-sale-c1.png
+tap 239 161          # column 2, row 3
+frames 20
+dump out/shot/tg-sale-c2.png
+tap 152 140          # the right column's fourth chest: page 9
+frames 20
+dump out/shot/tg-sale-tab9.png
+npc-return
+frames 60
+
+# 가방: the in-game bag.
+key back             # the in-game menu grid
+frames 60
+tap 198 46           # 가방
+frames 20
+tap 198 46
+frames 40
+dump out/shot/tg-bag0.png
+tap 277 103          # column 3, row 1 — past the shipped grid
+frames 20
+dump out/shot/tg-bag-c3.png
+tap 181 103          # column 0, row 1
+frames 20
+dump out/shot/tg-bag-c0.png
+tap 210 132          # column 1, row 2
+frames 20
+dump out/shot/tg-bag-c1.png
+tap 239 161          # column 2, row 3
+frames 20
+dump out/shot/tg-bag-c2.png
+tap 152 140          # the right column's fourth chest: page 9
+frames 20
+dump out/shot/tg-bag-tab9.png

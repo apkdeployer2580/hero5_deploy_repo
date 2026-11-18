@@ -1,0 +1,353 @@
+# Verify the experience path actually runs: walk into monsters, attack, and
+# let one die.
+#
+#   cargo run -q -p hl5_probe -- --boot --script tools_re/scripts/expkill.txt #       --storage out/xp --new-cash-items --count 0xc06ec
+#
+# WHY THIS EXISTS. `ingame.txt` enters `Monster::SetDieMotion` 150 times and
+# reaches its experience award ZERO times, because that function opens with
+#
+#     0xc0688  ldr r3, [r0, #0xf0]
+#     0xc0694  cmp r3, #0
+#     0xc06a0  ble #0xc06ac          ; <= 0: fall through to the award
+#     0xc06a4  add sp, #0xc / pop    ; > 0: return at once
+#
+# and every one of those 150 calls takes the early return. So `ingame.txt`
+# cannot verify anything about experience, and the `--count 0xc06ec` it reports
+# is 0 for a reason that has nothing to do with the host.
+#
+# DO NOT ADD THIS TO `ab_905.sh`'s scene list. Like `keep-walking.txt` and the
+# joystick pair, this exists to move a counter, not to be compared as pixels.
+#
+# The attack button is OK, which the guest sees as key -5 (`key select`). The
+# touch joystick's centre is about (60, 200) in WIPI coords and it has a
+# +-10 px dead zone, so a `move` has to clear that to register a direction.
+# The stick is held with `press`/`move` and released with `release`, and the
+# hero keeps walking while OK is pressed (that is what `keep_walking` fixed),
+# so the two can overlap.
+# Online run: new game, skip the opening, land in gameplay, open the menu.
+#
+#   python tools_re/testserver.py --port 7301
+#   cargo run -q -p hl5_probe -- --boot --server 127.0.0.1:7301 #       --script tools_re/scripts/ingame.txt --film out/film
+#
+# See newgame-online.txt for the tap-then-select rule and the measured menu
+# geometry. Two things this script adds:
+#
+#   * The opening cutscene has a SKIP button at (28, 10) and it works on the
+#     first tap -- no confirm, no second select. It drops straight to the
+#     loading screen.
+#   * One of that loading screen's rotating tips is the answer to "why is the
+#     cash shop unreachable": 캐쉬 상점 이용을 위해서는 최소 1회 저장을 해야
+#     합니다 -- the shop needs the game saved at least once.
+
+frames 700
+tap 200 200          # title: "Tap to Continue"
+frames 90
+tap 152 48           # 게임시작
+frames 20
+key select
+frames 120
+tap 200 68           # save slot 1
+frames 20
+key select
+frames 120
+tap 140 68           # class: 워리어
+frames 20
+key select
+frames 150
+key select
+frames 250
+dump out/shot/90-cutscene.png
+
+tap 28 10            # SKIP
+frames 60
+dump out/shot/91-loading.png
+frames 120
+dump out/shot/92-ingame.png
+frames 120
+dump out/shot/93-ingame.png
+frames 120
+dump out/shot/94-ingame.png
+frames 120
+dump out/shot/95-ingame.png
+frames 120
+dump out/shot/96-ingame.png
+frames 120
+dump out/shot/97-ingame.png
+frames 120
+dump out/shot/98-ingame.png
+frames 120
+dump out/shot/99-ingame.png
+
+# SKIP ends one scripted event, not the whole opening. Keep pressing it.
+tap 28 10
+frames 90
+dump out/shot/a01-skip.png
+tap 28 10
+frames 90
+dump out/shot/a02-skip.png
+tap 28 10
+frames 90
+dump out/shot/a03-skip.png
+tap 28 10
+frames 90
+dump out/shot/a04-skip.png
+tap 28 10
+frames 90
+dump out/shot/a05-skip.png
+tap 28 10
+frames 90
+dump out/shot/a06-skip.png
+tap 28 10
+frames 90
+dump out/shot/a07-skip.png
+tap 28 10
+frames 90
+dump out/shot/a08-skip.png
+tap 28 10
+frames 90
+dump out/shot/a09-skip.png
+tap 28 10
+frames 90
+dump out/shot/a10-skip.png
+tap 28 10
+frames 90
+dump out/shot/a11-skip.png
+tap 28 10
+frames 90
+dump out/shot/a12-skip.png
+
+# Gameplay at last. First dismiss the quest popup: its bottom bar is
+# 보상보기 (view reward) on the left and OK on the right, so OK is near
+# (240, 200) -- a tap at 200 lands on 보상보기 and the popup stays.
+tap 240 200
+frames 20
+key select
+frames 60
+dump out/shot/c0-hud.png
+# Start the buff before fighting. Which one is chosen by the duration:
+# 10800001 marks the 슈퍼 성장의 서 (host x2 -> 3.0x total), 10800000 the
+# original (host x1 -> the guest's own 1.5x). Comment this out to measure the
+# unbuffed baseline.
+exp-buff 10800001
+frames 30
+
+# --- combat: circle the room and keep swinging ----------------------------
+press 60 200
+move 95 200
+frames 30
+keydown select
+frames 20
+keyup select
+frames 10
+keydown select
+frames 20
+keyup select
+release 95 200
+frames 20
+press 60 200
+move 60 165
+frames 30
+keydown select
+frames 20
+keyup select
+frames 10
+keydown select
+frames 20
+keyup select
+release 60 165
+frames 20
+press 60 200
+move 25 200
+frames 30
+keydown select
+frames 20
+keyup select
+frames 10
+keydown select
+frames 20
+keyup select
+release 25 200
+frames 20
+press 60 200
+move 60 235
+frames 30
+keydown select
+frames 20
+keyup select
+frames 10
+keydown select
+frames 20
+keyup select
+release 60 235
+frames 20
+press 60 200
+move 95 200
+frames 30
+keydown select
+frames 20
+keyup select
+frames 10
+keydown select
+frames 20
+keyup select
+release 95 200
+frames 20
+press 60 200
+move 60 165
+frames 30
+keydown select
+frames 20
+keyup select
+frames 10
+keydown select
+frames 20
+keyup select
+release 60 165
+frames 20
+press 60 200
+move 25 200
+frames 30
+keydown select
+frames 20
+keyup select
+frames 10
+keydown select
+frames 20
+keyup select
+release 25 200
+frames 20
+press 60 200
+move 60 235
+frames 30
+keydown select
+frames 20
+keyup select
+frames 10
+keydown select
+frames 20
+keyup select
+release 60 235
+frames 20
+press 60 200
+move 95 200
+frames 30
+keydown select
+frames 20
+keyup select
+frames 10
+keydown select
+frames 20
+keyup select
+release 95 200
+frames 20
+press 60 200
+move 60 165
+frames 30
+keydown select
+frames 20
+keyup select
+frames 10
+keydown select
+frames 20
+keyup select
+release 60 165
+frames 20
+press 60 200
+move 25 200
+frames 30
+keydown select
+frames 20
+keyup select
+frames 10
+keydown select
+frames 20
+keyup select
+release 25 200
+frames 20
+press 60 200
+move 60 235
+frames 30
+keydown select
+frames 20
+keyup select
+frames 10
+keydown select
+frames 20
+keyup select
+release 60 235
+frames 20
+press 60 200
+move 95 200
+frames 30
+keydown select
+frames 20
+keyup select
+frames 10
+keydown select
+frames 20
+keyup select
+release 95 200
+frames 20
+press 60 200
+move 60 165
+frames 30
+keydown select
+frames 20
+keyup select
+frames 10
+keydown select
+frames 20
+keyup select
+release 60 165
+frames 20
+press 60 200
+move 25 200
+frames 30
+keydown select
+frames 20
+keyup select
+frames 10
+keydown select
+frames 20
+keyup select
+release 25 200
+frames 20
+press 60 200
+move 60 235
+frames 30
+keydown select
+frames 20
+keyup select
+frames 10
+keydown select
+frames 20
+keyup select
+release 60 235
+frames 20
+press 60 200
+move 95 200
+frames 30
+keydown select
+frames 20
+keyup select
+frames 10
+keydown select
+frames 20
+keyup select
+release 95 200
+frames 20
+press 60 200
+move 60 165
+frames 30
+keydown select
+frames 20
+keyup select
+frames 10
+keydown select
+frames 20
+keyup select
+release 60 165
+frames 20
+frames 150
+dump out/shot/xp-fight.png
+

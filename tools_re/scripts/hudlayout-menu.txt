@@ -1,0 +1,132 @@
+# 배치변경 inside the in-game menu (ANALYSIS.md §68.10): the belt behind every
+# page and on the registration pages is drawn where the layout put it, and the
+# registration taps (스킬 / 가방 / 특성 → 단축키 등록) land on the moved slots.
+#
+# The storage must hold this layout before the run (퀵1 far left, 퀵5 up-left,
+# the page flip left of the panel; everything else home):
+#
+#   mkdir -p out/hudlayout-menu-storage
+#   printf 'mode custom\nslot1 -200 -90 100\nslot5 -40 -40 100\npage -170 -60 100\n' \
+#       > out/hudlayout-menu-storage/hl5_hudlayout.txt
+#   cargo run -q -p hl5_probe -- --boot --storage out/hudlayout-menu-storage \
+#       --screen-option --pad --boot-mode skip-network \
+#       --script tools_re/scripts/hudlayout-menu.txt \
+#       --watch 0x102488 --watch 0x103928 --watch 0x1013b4
+#
+# 400x240 (no --screen). The opening is hudlayout-ingame.txt's. Each page is
+# put in its registration substate with `menu-substate` (스킬 6, 가방 2,
+# 특성 4 — the guest's own SetSubState). Evidence: after `echo new-slot1`
+# the page's slot-hit address fires (스킬 0x102488, 가방 0x103928, 특성
+# 0x1013b4), after `echo old-slot1` it does not; hudlayout-menu-skill.png
+# has the registration mark (the icon being placed) whole on the moved 퀵1;
+# the summary's `with a registration mark` and `menu belt touch(es) laid
+# out` are nonzero. NOT for `ab_905.sh`.
+
+frames 700
+tap 200 200          # title: "Tap to Continue"
+frames 90
+tap 152 48           # 게임시작
+frames 20
+key select
+frames 120
+tap 200 68           # save slot 1
+frames 20
+key select
+frames 120
+tap 140 68           # class: 워리어
+frames 20
+key select
+frames 150
+key select
+frames 250
+tap 28 10            # SKIP out of the opening cutscene
+frames 60
+frames 240
+tap 28 10
+frames 90
+tap 28 10
+frames 90
+tap 28 10
+frames 90
+tap 28 10
+frames 90
+tap 28 10
+frames 90
+tap 28 10
+frames 90
+tap 28 10
+frames 90
+tap 28 10
+frames 90
+tap 28 10
+frames 90
+tap 28 10
+frames 90
+tap 28 10
+frames 90
+tap 28 10
+frames 90
+tap 240 200
+frames 20
+key select
+frames 60
+pad-connect
+frames 4
+dump out/shot/hudlayout-menu-field.png
+
+# 스킬 (3x3 grid, middle row left; a tap highlights, the second opens).
+key back
+frames 60
+tap 148 105
+frames 20
+tap 148 105
+frames 40
+dump out/shot/hudlayout-menu-backdrop.png
+menu-substate 6
+frames 20
+dump out/shot/hudlayout-menu-skill.png
+echo new-slot1
+tap 55 117
+frames 20
+echo old-slot1
+tap 255 207
+frames 20
+
+# 가방.
+menu-substate 0
+frames 10
+key back
+frames 40
+tap 205 45
+frames 20
+tap 205 45
+frames 40
+menu-substate 2
+frames 20
+dump out/shot/hudlayout-menu-bag.png
+echo new-slot1
+tap 55 117
+frames 20
+echo old-slot1
+tap 255 207
+frames 20
+
+# 특성.
+menu-substate 0
+frames 10
+key back
+frames 40
+tap 205 105
+frames 20
+tap 205 105
+frames 40
+menu-substate 4
+frames 20
+dump out/shot/hudlayout-menu-property.png
+echo new-slot1
+tap 55 117
+frames 20
+echo old-slot1
+tap 255 207
+frames 20
+echo end

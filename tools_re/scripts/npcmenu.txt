@@ -1,0 +1,134 @@
+# The engineer/blacksmith screens — 제련 / 오브결합 / 조합 / 도감 / 판매.
+#
+#   cargo run -q -p hl5_probe -- --boot --storage out/npc-storage \
+#       --script tools_re/scripts/npcmenu.txt --film out/npc-film
+#
+# **This scene exists because the other four do not cover it.** Across all 905
+# frames of newgame + ingame + shop + online, `Battle::CallNpcMenu` is called
+# exactly zero times, which leaves `DrawRefine` (4,820 B), `DrawOrbCombine`
+# (4,664 B), `DrawNormalMix` (2,996 B) and `DrawCollection` (6,592 B) — 19 KB
+# of drawing code — outside the byte-identity acceptance test. Those screens
+# hit blitter variants `patch.rs` currently declines about 315 times every 30
+# frames, so the next port to lift a decline is exactly the change that could
+# corrupt them with nobody watching (ANALYSIS.md §31.6).
+#
+# It is the ingame.txt prefix as far as the gameplay HUD — there is no shorter
+# way in, the menus need `gv+0x27C` to hold a `StateGame` — and then the eight
+# jump-table entries in turn. Offline: no --server, so the boot popup gets
+# dismissed the way newgame.txt does it.
+#
+# State numbering is `StateInNpcMenu::KeyPressed`'s 8-entry jump table. Mind
+# the `addls pc, pc, rX, lsl #2` idiom when re-deriving it: **case 0 is pc+8**,
+# the slot *after* the fall-through, so a naive read shifts every case by one.
+#   2 판매   3 일반제련(LowRefine)   4 고급제련(HighRefine)
+#   5 오브결합   6 조합   7 도감
+# 0 and 1 are visited too: an entry that draws nothing is still an entry, and
+# an A/B that skips it proves nothing about it.
+
+frames 700
+tap 200 200          # title: "Tap to Continue"
+frames 90
+tap 152 48           # 게임시작
+frames 20
+key select
+frames 120
+tap 200 68           # save slot 1
+frames 20
+key select
+frames 120
+tap 140 68           # class: 워리어
+frames 20
+key select
+frames 150
+key select
+frames 250
+
+tap 28 10            # SKIP out of the opening cutscene
+frames 60
+frames 240
+
+# SKIP ends one scripted event, not the whole opening. Keep pressing it.
+tap 28 10
+frames 90
+tap 28 10
+frames 90
+tap 28 10
+frames 90
+tap 28 10
+frames 90
+tap 28 10
+frames 90
+tap 28 10
+frames 90
+tap 28 10
+frames 90
+tap 28 10
+frames 90
+tap 28 10
+frames 90
+tap 28 10
+frames 90
+tap 28 10
+frames 90
+tap 28 10
+frames 90
+
+# Gameplay. Dismiss the quest popup first: its bottom bar is 보상보기 on the
+# left and OK on the right, so OK is near (240, 200) — a tap at 200 lands on
+# 보상보기 and the popup stays.
+tap 240 200
+frames 20
+key select
+frames 60
+dump out/shot/n0-hud.png
+
+# One screen at a time, each entered and left through the guest's own two
+# calls. 40 frames is enough for a screen whose contents do not animate and
+# still catches a first frame drawn before the model is ready.
+npc-menu 0
+frames 40
+dump out/shot/n1-state0.png
+npc-return
+frames 4
+
+npc-menu 1
+frames 40
+dump out/shot/n2-state1.png
+npc-return
+frames 4
+
+npc-menu 2
+frames 40
+dump out/shot/n3-sell.png
+npc-return
+frames 4
+
+npc-menu 3
+frames 40
+dump out/shot/n4-lowrefine.png
+npc-return
+frames 4
+
+npc-menu 4
+frames 40
+dump out/shot/n5-highrefine.png
+npc-return
+frames 4
+
+npc-menu 5
+frames 40
+dump out/shot/n6-orb.png
+npc-return
+frames 4
+
+npc-menu 6
+frames 40
+dump out/shot/n7-mix.png
+npc-return
+frames 4
+
+npc-menu 7
+frames 40
+dump out/shot/n8-collection.png
+npc-return
+frames 20

@@ -1,0 +1,161 @@
+# The in-game menu's 시스템 > 환경설정 with the 배치변경 row (display 10)
+# and the HUD editor over the field as the player last saw it, sharp
+# (`hl5_core::igoptions`, `hl5_core::hudedit` scene InGame); then back on
+# the field, the layout drawn and pressed where it was put.
+#
+#   cargo run -q -p hl5_probe -- --boot --storage out/hudlayout-ig-storage \\
+#       --screen-option --pad --boot-mode skip-network \\
+#       --script tools_re/scripts/hudlayout-ingame.txt --watch 0xe2328
+#
+# 400x240 (the coordinates are gamepad.txt's; no --screen). The opening is
+# padmap-ingame.txt's. Evidence: hudlayout-ig-editor.png (the sharp field,
+# the real belt / OK / dash / joystick / bar outlined), hudlayout-ig-moved.png
+# (OK dragged left and up, 130%), hudlayout-ig-closed.png (완료: the list,
+# 배치변경 = 커스텀), hudlayout-ig-field2.png (back on the field, OK where it
+# was put). The `--watch 0xe2328` line (TouchPressed's OK arm) fires after
+# `echo new-OK` and not after `echo old-OK`.
+# NOT for `ab_905.sh`.
+
+frames 700
+tap 200 200          # title: "Tap to Continue"
+frames 90
+tap 152 48           # 게임시작
+frames 20
+key select
+frames 120
+tap 200 68           # save slot 1
+frames 20
+key select
+frames 120
+tap 140 68           # class: 워리어
+frames 20
+key select
+frames 150
+key select
+frames 250
+tap 28 10            # SKIP out of the opening cutscene
+frames 60
+frames 240
+tap 28 10
+frames 90
+tap 28 10
+frames 90
+tap 28 10
+frames 90
+tap 28 10
+frames 90
+tap 28 10
+frames 90
+tap 28 10
+frames 90
+tap 28 10
+frames 90
+tap 28 10
+frames 90
+tap 28 10
+frames 90
+tap 28 10
+frames 90
+tap 28 10
+frames 90
+tap 28 10
+frames 90
+tap 240 200
+frames 20
+key select
+frames 60
+pad-connect
+frames 4
+dump out/shot/hudlayout-ig-field.png
+
+# The in-game menu, and the 시스템 icon (3x3, last cell).
+key back
+frames 60
+dump out/shot/hudlayout-ig-icons.png
+key right
+frames 10
+key right
+frames 10
+key down
+frames 10
+key down
+frames 15
+key select
+frames 40
+dump out/shot/hudlayout-ig-menu.png
+
+# 환경설정 on the system page (저장하기 / 환경설정 / 도움말 / 메인화면).
+key down
+frames 10
+key select
+frames 40
+dump out/shot/hudlayout-ig-list.png
+
+# Ten downs: 배치변경 is display 10.
+key down
+frames 8
+key down
+frames 8
+key down
+frames 8
+key down
+frames 8
+key down
+frames 8
+key down
+frames 8
+key down
+frames 8
+key down
+frames 8
+key down
+frames 8
+key down
+frames 20
+dump out/shot/hudlayout-ig-row10.png
+key right
+frames 25
+dump out/shot/hudlayout-ig-ask.png
+key select          # 예
+frames 25
+dump out/shot/hudlayout-ig-editor.png
+
+# OK (centre (369,200)) dragged to (230,130), then + twice and - once... 
+# then a pinch: hold it, a second finger 30 px away pulled to 39 px = 130%.
+press 369 200 0
+frames 2
+move 300 170 0
+frames 2
+move 230 130 0
+frames 4
+press 260 130 1
+frames 2
+move 269 130 1
+frames 4
+release 269 130 1
+frames 2
+release 230 130 0
+frames 4
+dump out/shot/hudlayout-ig-moved.png
+
+# 완료.
+tap 36 68
+frames 25
+dump out/shot/hudlayout-ig-closed.png
+
+# Back to the field: BACK leaves the option page, BACK the system tab, BACK
+# the menu.
+key back
+frames 30
+key back
+frames 30
+key back
+frames 60
+dump out/shot/hudlayout-ig-field2.png
+echo new-OK
+tap 230 130
+frames 10
+echo old-OK
+tap 369 200
+frames 10
+echo end

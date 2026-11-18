@@ -1,0 +1,30 @@
+# The whole attract sequence, dead-server. Dismiss the network popup, then
+# let the intro run and tap through it.
+#
+# Frame numbers in the dumps are the driver's, so a still that looks wrong is
+# findable in the --film strip of the same run.
+
+frames 60
+tap 200 145        # the "server is not available" popup's OK bar
+frames 60
+dump out/shot/10-rating.png
+
+frames 120
+dump out/shot/11.png
+frames 120
+dump out/shot/12.png
+frames 120
+dump out/shot/13.png
+frames 120
+dump out/shot/14.png
+
+tap 200 120
+frames 60
+dump out/shot/15.png
+
+key select
+frames 60
+dump out/shot/16.png
+
+frames 120
+dump out/shot/17.png

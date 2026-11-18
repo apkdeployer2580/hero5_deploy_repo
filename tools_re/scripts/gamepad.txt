@@ -1,0 +1,166 @@
+# Gamepad: the badges, and the stick that actually moves the hero.
+#
+#   cargo run -q -p hl5_probe -- --boot --pad --script tools_re/scripts/gamepad.txt
+#
+# The opening is `ingame.txt`'s, verbatim minus its screenshots — SKIP ends one
+# scripted event and not the whole prologue, which is why there are a dozen of
+# them. Coordinates are 400x240, so do NOT add `--screen`: the guest lays its
+# menus out from `Graphic::GetWidth()` and every tap here would miss.
+#
+# What this replay is evidence FOR, and how to read the run:
+#
+#   1. The badges. `pad-connect` reports a pad, and from then on every field
+#      control the map binds carries the position badge of its pad button. The
+#      `pad badges N painted` line and the PNG pair are the proof; the shot
+#      taken before the connect is the control, and `pad-hud off` puts it back.
+#
+#   2. The stick. `pad-stick 1 0` is a synthetic finger on the guest's own
+#      joystick (`hl5_core::gamepad` says why a direction KEY cannot move the
+#      hero in this build), so the hero must actually walk. The sharp evidence
+#      is `--count _ZN4CHAR9SetMoveXYEii`: `HERO::WorkMoveHero` ends in that
+#      call and only reaches it with an angle that is not −1. Run the replay
+#      with and without the `pad-stick` lines and compare.
+#
+#   3. The queue. Two face buttons pressed inside one tick both arrive —
+#      `N event(s) delivered` counts them — where the guest's own one-slot
+#      mailbox would have dropped the second in silence.
+#
+# Do NOT put this in `ab_905.sh`'s scene list: it deliberately changes what is
+# drawn, which is the whole point of the badges.
+
+frames 700
+tap 200 200          # title: "Tap to Continue"
+frames 90
+tap 152 48           # 게임시작
+frames 20
+key select
+frames 120
+tap 200 68           # save slot 1
+frames 20
+key select
+frames 120
+tap 140 68           # class: 워리어
+frames 20
+key select
+frames 150
+key select
+frames 250
+
+tap 28 10            # SKIP
+frames 60
+frames 120
+frames 120
+frames 120
+frames 120
+frames 120
+frames 120
+frames 120
+frames 120
+
+# SKIP ends one scripted event, not the whole opening. Keep pressing it.
+tap 28 10
+frames 90
+tap 28 10
+frames 90
+tap 28 10
+frames 90
+tap 28 10
+frames 90
+tap 28 10
+frames 90
+tap 28 10
+frames 90
+tap 28 10
+frames 90
+tap 28 10
+frames 90
+tap 28 10
+frames 90
+tap 28 10
+frames 90
+tap 28 10
+frames 90
+tap 28 10
+frames 90
+
+# Gameplay at last. First dismiss the quest popup: its bottom bar is
+# 보상보기 (view reward) on the left and OK on the right, so OK is near
+# (240, 200) -- a tap at 200 lands on 보상보기 and the popup stays.
+tap 240 200
+frames 20
+key select
+frames 60
+# Gameplay, no pad reported yet: the field HUD is the game's own, untouched.
+dump out/shot/pad-0-nopad.png
+
+# A pad appears. Same scene, same frame budget — only the badges are new.
+pad-connect
+frames 4
+dump out/shot/pad-1-badges.png
+
+# Walk right on the stick, then up, then let go. The hero moves because this
+# goes in as a finger on the guest's joystick, pressed at the point both touch
+# schemes treat as the stick centre.
+# Short bursts, and back the way it came: walking far enough in one
+# direction here reaches an NPC and opens a conversation, which is a fine
+# thing to have proved once (it means the stick really moves the hero) but a
+# poor screen to photograph the badges on.
+pad-stick 1 0
+frames 30
+dump out/shot/pad-2-walk-right.png
+pad-stick -1 0
+frames 30
+dump out/shot/pad-3-walk-left.png
+pad-stick 0 0
+frames 20
+dump out/shot/pad-4-stopped.png
+
+# Attack (face-down = OK), then two quick slots inside one tick — the second
+# is the one the guest would have dropped without the host queue.
+pad a
+frames 30
+pad x down
+pad y down
+frames 2
+pad x up
+pad y up
+frames 40
+dump out/shot/pad-5-buttons.png
+
+# The d-pad, for the pads that report it as KEY events rather than as HAT
+# axes. It has to steer the joystick too: a WIPI direction key animates a walk
+# that never moves, so a `pad left` that ended up as a key would look like the
+# d-pad being dead. Watch `--count 0x8d03c` grow across these two.
+pad left down
+frames 25
+dump out/shot/pad-9-dpad-left.png
+pad left up
+frames 10
+pad down down
+frames 25
+pad down up
+frames 10
+dump out/shot/pad-a-dpad-down.png
+
+# The belt page flip. hero3 puts it on the right stick press; here it is on
+# SELECT, because a pad with no analog sticks has no stick to press and the
+# page is the one control that must not be unreachable. It is the game's own
+# `#` key either way (`HERO::ChangeHotKeyToggle`).
+pad select
+frames 40
+dump out/shot/pad-6-page.png
+
+# Dash, on START: two direction presses through the guest's own double-tap
+# window. Nothing to photograph reliably (it is 10 frames of motion), so the
+# evidence is that the edge resolves and delivers at all.
+pad start
+frames 40
+dump out/shot/pad-b-dash.png
+
+# Badges off on request, with the pad still attached.
+pad-hud off
+frames 4
+dump out/shot/pad-7-hud-off.png
+pad-hud auto
+frames 4
+dump out/shot/pad-8-hud-back.png

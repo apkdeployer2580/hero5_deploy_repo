@@ -1,0 +1,63 @@
+# 세로 (240x320): the twelve-row 환경설정 and the key-mapping screen laid out
+# for the upright canvas — the belt row and the page flip where the relaid
+# HUD draws them, OK and the rest in a two-column grid.
+#
+#   cargo run -q -p hl5_probe -- --boot --storage out/padmap-p-storage \
+#       --screen-option --pad --screen-mode p --boot-mode skip-network \
+#       --script tools_re/scripts/padmap-portrait.txt
+#
+# Evidence: padmap-p-list.png (the list on the narrow canvas),
+# padmap-p-screen.png (the mapping screen with badges), padmap-p-assigned.png
+# (the first belt slot tapped at (23,295) and given the right shoulder, R1).
+# NOT for `ab_905.sh`.
+
+frames 60
+tap 120 160
+frames 700
+tap 120 200
+frames 90
+key right
+frames 20
+key right
+frames 20
+key down
+frames 20
+key select
+frames 60
+dump out/shot/padmap-p-list.png
+
+key down
+frames 10
+key down
+frames 10
+key down
+frames 10
+key down
+frames 10
+key down
+frames 10
+key down
+frames 10
+key down
+frames 10
+key down
+frames 10
+key down
+frames 20
+key right
+frames 25
+dump out/shot/padmap-p-ask.png
+pad-connect
+key select
+frames 25
+dump out/shot/padmap-p-screen.png
+
+tap 23 295
+frames 10
+pad 103
+frames 10
+dump out/shot/padmap-p-assigned.png
+# 완료 at the grid's last cell: (126, 164)-(216, 184).
+tap 170 174
+frames 25
+dump out/shot/padmap-p-closed.png

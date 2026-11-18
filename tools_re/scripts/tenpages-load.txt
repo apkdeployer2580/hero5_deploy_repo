@@ -1,0 +1,40 @@
+# 가방·창고 10페이지 (ANALYSIS.md §65) — step 2 of 2: boot again, load slot 1,
+# dump the bag, then walk the bag menu's ten tabs. See tenpages-fill.txt.
+#
+# Expected: out/tenpages-after.txt equals out/tenpages-before.txt; the shots
+# show the game's chests in two columns (1-5 | 6-10) left of the grid, which
+# sits 12 px right of where it ships; `ten pages ... N tab tap(s), 2 column
+# key(s)` and `0 finding(s)`. tenpages-grid.txt taps the moved cells.
+
+frames 700
+tap 200 200          # title
+frames 90
+tap 152 48           # 게임시작
+frames 20
+key select
+frames 120
+tap 200 68           # slot 1 (has a save)
+frames 20
+key select
+frames 400
+bagdump out/tenpages-after.txt
+key back             # the in-game menu grid
+frames 60
+tap 198 46           # 가방
+frames 20
+tap 198 46
+frames 40
+dump out/shot/tp-bag1.png
+tap 143 68           # tab 6
+frames 20
+dump out/shot/tp-bag6.png
+tap 143 164          # tab 10
+frames 20
+dump out/shot/tp-bag10.png
+key back             # cursor back to the tab column
+frames 20
+key left             # 10 -> 5
+frames 20
+key right            # 5 -> 10
+frames 20
+dump out/shot/tp-bag-keys.png

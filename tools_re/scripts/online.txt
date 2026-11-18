@@ -1,0 +1,27 @@
+# The same run as newgame.txt, but with a live server.
+#
+#   python tools_re/testserver.py --port 7301
+#   cargo run -q -p hl5_probe -- --boot --script tools_re/scripts/online.txt \
+#                                --server 127.0.0.1:7301
+#
+# There is no "server is not available" popup to dismiss here: the login
+# handshake completes (login 1 -> login 5 -> event 1 -> the two CrossRoad
+# queries) and the client walks straight into the intro.
+
+frames 700
+dump out/shot/30-title.png
+
+tap 200 200        # "Tap to Continue"
+frames 90
+dump out/shot/31-menu.png
+
+tap 200 100
+frames 90
+dump out/shot/32.png
+
+key select
+frames 90
+dump out/shot/33.png
+
+frames 120
+dump out/shot/34.png

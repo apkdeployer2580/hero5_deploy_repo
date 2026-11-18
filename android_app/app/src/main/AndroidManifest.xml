@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!--
+      The original asked for fifteen permissions, most of them for a carrier
+      SDK and a DRM binding that no longer exist (ANALYSIS.md §3). Of the four
+      that map onto anything the seam actually does — INTERNET, VIBRATE,
+      CALL_PHONE, READ_PHONE_STATE — only the first is needed today.
+
+      INTERNET: the original servers are gone, but the guest's network code is
+      intact and the socket layer redirects it to a private server, so the
+      online path (login, the cash shop) works again. Without it `connect`
+      fails with EPERM before it leaves the process. It is install-time, so
+      there is still no runtime permission prompt.
+
+      The rest stay out. Network *state* is answered by the runtime itself;
+      vibration and the phone/web launchers are acknowledged without doing
+      anything, and asking for a permission to implement nothing is worse than
+      not asking.
+    -->
+    <uses-permission android:name="android.permission.INTERNET" />
+
+    <application
+        android:allowBackup="true"
+        android:label="@string/app_name"
+        android:icon="@mipmap/ic_launcher"
+        android:hasCode="true">
+
+        <activity
+            android:name=".MainActivity"
+            android:exported="true"
+            android:configChanges="orientation|keyboardHidden|screenSize|screenLayout|density|uiMode"
+            android:screenOrientation="sensorLandscape"
+            android:theme="@style/AppTheme">
+
+            <!-- GameActivity loads the native library named here (libmain.so). -->
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="main" />
+
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+    </application>
+</manifest>

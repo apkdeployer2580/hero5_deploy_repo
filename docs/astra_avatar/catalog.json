@@ -1,0 +1,101 @@
+[
+  {
+    "id": "01",
+    "slug": "ember_swordsman",
+    "name": "적염 검사",
+    "reference": "references/01_ember_swordsman.png",
+    "draft": "drafts/01_ember_swordsman_v1.png",
+    "description": "Orange spiky hair, open black sleeveless ragged long robe, red sash, black wide trousers, dark long katana.",
+    "status": "concept"
+  },
+  {
+    "id": "02",
+    "slug": "wandering_reaper",
+    "name": "흑립 방랑검객",
+    "reference": "references/02_wandering_reaper.png",
+    "draft": "drafts/02_wandering_reaper_v1.png",
+    "description": "Wide dark purple bamboo hat with hanging beads, white mask and long pale hair, tattered black purple robes, burgundy trailing ribbons, long dark katana.",
+    "status": "concept"
+  },
+  {
+    "id": "03",
+    "slug": "ivory_swordsman",
+    "name": "백야 검사",
+    "reference": "references/03_ivory_swordsman.png",
+    "draft": "drafts/03_ivory_swordsman_v1.png",
+    "description": "Silver short hair, white feather shoulder mantle and white gold long coat, black red inner robes, jade details, gold sword hilt and silver long sword.",
+    "status": "concept"
+  },
+  {
+    "id": "04",
+    "slug": "solar_knight",
+    "name": "태양 성기사",
+    "reference": "references/04_solar_knight.png",
+    "draft": "drafts/04_solar_knight_v1.png",
+    "description": "Closed silver dark helmet, silver plate armor, enormous gold flame shaped shoulder ornaments, white gold tabard and upright broad silver sword.",
+    "status": "concept"
+  },
+  {
+    "id": "05",
+    "slug": "horned_oni",
+    "name": "백각 도깨비",
+    "reference": "references/05_horned_oni.png",
+    "draft": "drafts/05_horned_oni_v1.png",
+    "description": "Two curved dark horns, long white hair, pale masklike face, indigo purple kimono and baggy pants, large white fur stole, huge curved ivory blade.",
+    "status": "concept"
+  },
+  {
+    "id": "06",
+    "slug": "frost_commander",
+    "name": "설야 지휘관",
+    "reference": "references/06_frost_commander.png",
+    "draft": "drafts/06_frost_commander_v1.png",
+    "description": "Spiky silver hair, face hidden by high black collar, fitted dark navy military coat, huge white fur shoulder collar and fur cuffs, asymmetric spiked armored sleeve, black boots, no weapon.",
+    "status": "concept"
+  },
+  {
+    "id": "07",
+    "slug": "nocturne_admiral",
+    "name": "흑금 제독",
+    "reference": "references/07_nocturne_admiral.png",
+    "draft": "drafts/07_nocturne_admiral_v1.png",
+    "description": "Black gold officer cap, face obscured by dark mask, dark navy long naval coat and sweeping cape, elaborate gold epaulettes and chains, golden flame hem details, black gold tall boots.",
+    "status": "concept"
+  },
+  {
+    "id": "08",
+    "slug": "crimson_admiral",
+    "name": "홍련 제독",
+    "reference": "references/08_crimson_admiral.png",
+    "draft": "drafts/08_crimson_admiral_v1.png",
+    "description": "Black gold officer cap, visible face, black officer uniform, rich red gold lined cape and long red side panels, gold epaulettes, white gloves, black boots.",
+    "status": "concept"
+  },
+  {
+    "id": "09",
+    "slug": "azure_wanderer",
+    "name": "청운 무사",
+    "reference": "references/09_azure_wanderer.png",
+    "draft": "drafts/09_azure_wanderer_v1.png",
+    "description": "Blue conical woven hat, long deep blue martial robe, red collar sash and bracers, black gold decorated front panel, sandals, no visible weapon.",
+    "status": "concept"
+  },
+  {
+    "id": "10",
+    "slug": "boar_berserker",
+    "name": "멧돼지 광전사",
+    "reference": "references/10_boar_berserker.png",
+    "draft": "drafts/10_boar_berserker_v1.png",
+    "description": "Oversized cute grey wild boar head mask with pink snout and tusks, bare tattooed muscular torso, brown fur waist armor with gold ornaments, baggy black trousers, two short silver gold blue gem swords, sandals.",
+    "status": "concept"
+  },
+  {
+    "id": "11",
+    "slug": "hooded_brawler",
+    "name": "적흑 권투가",
+    "reference": "references/11_hooded_brawler.png",
+    "draft": "drafts/11_hooded_brawler_v1.png",
+    "description": "Black hood trimmed red, open tattered black red short jacket, bare tattooed chest, red boxing gloves, black red shorts with white trim, bandaged calves and sandals.",
+    "status": "concept"
+  }
+]

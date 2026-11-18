@@ -1,0 +1,59 @@
+# 세이브 되돌리기 on the title screen (`hl5_core::savexfer`, §70) — the
+# third step of `savexfer-title.txt`'s round trip, on the same storage:
+#
+#   cargo run -q -p hl5_probe -- --boot --storage out/savexfer-b \
+#       --screen-option --boot-mode skip-network \
+#       --script tools_re/scripts/savexfer-restore.txt
+#
+# Evidence: savexfer-restore-ask.png — `<date> 상태로 / 되돌리려면 종료해야
+# 합니다. / 지금 종료하시겠습니까?`, the date the vault generation's. 예
+# stages it (summary: 1 staged, `guest exit asked for`); the next start applies
+# it and keeps what it replaced, so the same row undoes the undo.
+# NOT for `ab_905.sh`.
+
+frames 700
+tap 200 200
+frames 90
+key right
+frames 20
+key right
+frames 20
+key down
+frames 20
+key select
+frames 60
+
+# Fourteen downs: 세이브 되돌리기 is display 14, the last row.
+key down
+frames 8
+key down
+frames 8
+key down
+frames 8
+key down
+frames 8
+key down
+frames 8
+key down
+frames 8
+key down
+frames 8
+key down
+frames 8
+key down
+frames 8
+key down
+frames 8
+key down
+frames 8
+key down
+frames 8
+key down
+frames 8
+key down
+frames 20
+key select
+frames 25
+dump out/shot/savexfer-restore-ask.png
+key select           # 예
+frames 30

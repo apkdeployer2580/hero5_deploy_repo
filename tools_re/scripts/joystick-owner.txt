@@ -1,0 +1,139 @@
+# Two fingers on the touch joystick: does the guest still know which one owns it?
+#
+# The guest gives the stick an owning finger. `StateGame::TouchPressed+0x250`
+# (0xE1CCC) writes `gv+0x125 = 1` and `gv+0x124 = <the pressing pointer id>`,
+# and `StateGame::TouchReleased+0xdc` (0xE18E8) lets go of the stick only when
+# `cmp id, (i8)gv+0x124` matches — the coordinates are not consulted at all.
+# ANALYSIS.md 37.5.
+#
+# So the whole question is whether the host tells the guest which finger moved.
+# It used to pass a literal 0 for every one of them, which made that comparison
+# always true, and lifting a button let go of the stick.
+#
+# Run this and its twin, which is the same script with every finger reporting
+# id 0 — the way the shell used to behave:
+#
+#   cargo run -q -p hl5_probe -- --boot --storage out/joy-owner-storage \
+#       --script tools_re/scripts/joystick-owner.txt
+#   cargo run -q -p hl5_probe -- --boot --storage out/joy-noowner-storage \
+#       --script tools_re/scripts/joystick-noowner.txt
+#   python tools_re/ab_compare.py out/shot/tf-02-still-held.png \
+#       out/shot/tf0-02-still-held.png
+#
+# The pass condition is the picture. `tf-01` — the stick just grabbed, before
+# the second finger arrives — is **byte-identical** between the two runs, and
+# `tf-02` — after three taps from that second finger — **differs**: measured,
+# 4,027 of 96,000 pixels, the first at (59, 139), which is the joystick itself.
+# With the ids wired the ring is still on screen; with every finger claiming
+# id 0 it is gone, because the second finger's lift let go of it.
+#
+# Counters do *not* separate the two runs, and it is worth writing down why,
+# because reaching for them first is the obvious move: the stick is grabbed
+# twice and released twice either way, so `--count 0xe1ccc` (the grab at
+# `TouchPressed+0x250`) and `--count 0xe18f8` (the release block in
+# `TouchReleased`) both read 2/2. Only the *timing* differs — in the broken run
+# the impostor's first lift releases it and the owner's own release then finds
+# nothing left to do. The frame is the evidence; the count is not.
+#
+# The prologue is `ingame.txt`'s, up to the point where the quest popup is
+# dismissed and the touch UI is on screen. See that file for the geometry and
+# for the tap-then-select rule.
+
+frames 700
+tap 200 200          # title: "Tap to Continue"
+frames 90
+tap 152 48           # 게임시작
+frames 20
+key select
+frames 120
+tap 200 68           # save slot 1
+frames 20
+key select
+frames 120
+tap 140 68           # class: 워리어
+frames 20
+key select
+frames 150
+key select
+frames 250
+
+tap 28 10            # SKIP the opening cutscene
+frames 60
+frames 1080
+
+# SKIP ends one scripted event, not the whole opening. Keep pressing it.
+tap 28 10
+frames 90
+tap 28 10
+frames 90
+tap 28 10
+frames 90
+tap 28 10
+frames 90
+tap 28 10
+frames 90
+tap 28 10
+frames 90
+tap 28 10
+frames 90
+tap 28 10
+frames 90
+tap 28 10
+frames 90
+tap 28 10
+frames 90
+tap 28 10
+frames 90
+tap 28 10
+frames 90
+
+# Gameplay. Dismiss the quest popup: OK is the right-hand button.
+tap 240 200
+frames 20
+key select
+frames 60
+dump out/shot/tf-00-hud.png
+
+# ---- phase 1: the owner keeps the stick through three other fingers ---------
+#
+# (100, 150) is inside the region the grab clamps to (x >= 45, y < 195 at
+# `TouchPressed+0x1ec`), and away from the button column on the right.
+press 100 150 0
+frames 2
+move 118 150 0       # past the 10 px deadzone, so a direction is latched
+frames 2
+dump out/shot/tf-01-stick-held.png
+
+press 370 196 1      # a second finger, elsewhere
+frames 2
+release 370 196 1    # ...whose lift must not reach the stick
+frames 2
+press 370 196 1
+frames 2
+release 370 196 1
+frames 2
+press 370 196 1
+frames 2
+release 370 196 1
+frames 2
+dump out/shot/tf-02-still-held.png
+
+release 118 150 0    # the owner lets go: this one must release it
+frames 2
+dump out/shot/tf-03-released.png
+
+# ---- phase 2: the same finger id really does release it --------------------
+#
+# A control, so a count of zero cannot be read as "the release path is
+# unreachable in this replay".
+press 100 150 0
+frames 2
+move 118 150 0
+frames 2
+press 370 196 0      # same id as the owner: an impostor the guest cannot tell apart
+frames 2
+release 370 196 0    # ...so this one does drop the stick
+frames 2
+dump out/shot/tf-04-impostor.png
+release 118 150 0
+frames 2

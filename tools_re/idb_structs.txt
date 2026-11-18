@@ -1,0 +1,200 @@
+# Struct field NAMES recovered from the .idb, in order.
+# NOT offsets, NOT types, NOT sizes — confirm those by reading the
+# access code with disasm.py before relying on any layout.
+#
+# Most entries are IDA standard types (Elf32_*, sockaddr_in, stat,
+# ARM unwind). The WIPI/midas seam types are the reason this file
+# exists: MC_GrpContext, midasAudioInfo, MC_FileInfo.
+#
+# Recovery is heuristic (walk the member netnodes that follow the
+# struct node), so a list can be SHORT even without the mark below:
+# sockaddr_in comes out with 2 of its 4 fields. Treat every list as
+# "at least these fields, in this order".
+# "TRUNCATED?" additionally marks a struct whose members filled all
+# the netnode space before the next struct.
+
+$5BCA4E9213AB69DE4E38D3AB70B004D8
+    fnstart
+    ehtp
+    additional
+    reserved1
+
+$61A3704B48BB6509890320A20B87A12A
+    bitpattern
+
+$94EC6350222289BD94E6A27054C6DCD1
+    reserved1
+    reserved2
+    reserved3
+    reserved4
+    reserved5
+
+$9E389EF8DB18C75445DC45CE7C2FFB9B::$2798575F521600C1E26DD161E22996D8
+    d_val
+    d_ptr
+
+$DF85BFF453EAC41A14F9B7A4A423AFA7
+    _sp
+    bitpattern
+
+Barycoord
+    u
+    v
+    w
+
+CommonEle
+    next
+    prev
+
+Elf32_Dyn::$A263394DDF3EC2D4B1B8448EDD30E249
+    d_val
+    d_ptr
+
+Elf32_Rel
+    r_offset
+    r_info
+
+Elf32_Sym
+    st_name
+    st_value
+    st_size
+    st_info
+    st_other
+    st_shndx
+
+Heckbert_Edge
+    x
+    dx
+    i
+
+MCTimer
+    alarmTime
+
+MC_FileInfo
+    attrib
+    creationTime
+    size
+
+MC_GrpContext
+    m_mask
+    m_clip
+    m_fgpxl
+    m_bgpxl
+    m_transpxl
+    m_alpha
+    m_offsetX
+    m_offsetY
+    m_pfnPixelOp
+    m_param1
+    m_reserved
+    m_style
+
+Point2
+    x
+    y
+
+RGBQUAD
+    rgbBlue
+    rgbGreen
+    rgbRed
+    rgbReserved
+
+_Unwind_Control_Block_0
+    exception_class
+    exception_cleanup
+
+__gnu_unwind_state
+    data
+    next
+    bytes_left
+    words_left
+
+core_regs
+    r
+
+fd_set
+    fds_bits
+
+fpa_reg
+    w
+
+in_addr
+    s_addr
+
+linger
+    l_onoff
+    l_linger
+
+midasAudioInfo
+    audioEncodingType
+    audioType
+    handlingType
+    dataOffset
+    dataLength
+    bitsPerSample
+    samplingRate
+    channels
+    bDirtyBuffer
+    audioBuffer
+
+phase1_vrs
+    demand_save_flags
+
+phase2_vrs
+    demand_save_flags
+    core
+
+pthread_mutex_t
+    value
+
+sockaddr_in
+    sin_family
+    sin_port
+
+stat
+    st_dev
+    __pad0
+    __st_ino
+    st_mode
+    st_nlink
+    st_uid
+    st_gid
+    st_rdev
+    __pad3
+    st_size
+    st_blksize
+    st_blocks
+    st_atime
+    st_atime_nsec
+    st_mtime
+    st_mtime_nsec
+    st_ctime
+    st_ctime_nsec
+    st_ino
+
+timeb
+    time
+    millitm
+    timezone
+    dstflag
+
+timeval
+    tv_sec
+    tv_usec
+
+va_list
+    __ap
+
+vfp_regs
+    d
+    pad
+
+vfpv3_regs
+    d
+
+wmmxc_regs
+    wc
+
+wmmxd_regs
+    wd
+

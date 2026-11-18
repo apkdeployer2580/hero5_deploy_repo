@@ -1,0 +1,119 @@
+# 창고접속 with no server — the menu must open, and each server-only item must
+# say so in the guest's own popup rather than bouncing out with (302).
+#
+# **This scene needs a save already in the storage directory.** 창고접속 goes
+# 창고접속 -> 슬롯선택 first, and with three `empty` slots it stops there and
+# never dials at all. So run something that saves into the same directory first:
+#
+#   S=out/wh-storage
+#   rm -rf $S && mkdir -p $S
+#   cargo run -q -p hl5_probe -- --boot --storage $S \
+#       --script tools_re/scripts/npcmenu.txt          # reaches gameplay, saves
+#   cargo run -q -p hl5_probe -- --boot --free-shop --offline-menus \
+#       --storage $S --script tools_re/scripts/warehouse.txt --film out/wh-film
+#
+# There is no shorter way in: nothing on the in-game menu returns to the title
+# (`key back` opens the character sheet), so the save has to come from a
+# separate run.
+#
+# What to look for in the log:
+#   * `localserver: nickname -> "…"`            the 1/3 answer
+#   * `localserver: 2/3 declined — offline`     판매거래소
+#   * `localserver: 4/6 declined — offline`     창고관리
+#   * `localserver: 8/3 declined — offline`     우편함
+#   * **no** `NETWORK::setError`, and no `— no handler` for anything but `0/2`,
+#     which wants no answer (ANALYSIS.md 32.7)
+
+frames 700
+dump out/shot/w0-title.png
+tap 200 200          # title: "Tap to Continue"
+frames 90
+dump out/shot/w1-mainmenu.png
+
+# The main menu is a 3x3 grid with 게임시작 highlighted on entry; 창고접속 is
+# the top-right cell. `right`, not a tap: it means the same thing at any canvas
+# width.
+#
+# **Three of them, not two.** The first keystroke after the title tap moves
+# nothing — measured, one dump per press: press 1 leaves 게임시작 highlighted,
+# press 2 reaches 익스퍼트, press 3 reaches 창고접속. Two presses lands on
+# 익스퍼트, whose own 슬롯선택 looks exactly like the one this scene wants and
+# sends no packets at all, so the mistake reads as "the handlers do not fire".
+key right
+frames 30
+key right
+frames 30
+key right
+frames 30
+dump out/shot/w2-highlight.png
+key select
+frames 150
+dump out/shot/w3-slotselect.png
+
+# 슬롯선택 -> slot 1 -> 창고 접속하시겠습니까? (통화료 부과) -> 예
+key select
+frames 90
+dump out/shot/w4-confirm.png
+key select
+frames 120
+dump out/shot/w5-connecting.png
+
+# The nickname popup (1/3) and then the offline notice (7/1) — both one-button
+# OK boxes.
+frames 120
+dump out/shot/w6-nickname.png
+key select
+frames 90
+dump out/shot/w7-notice.png
+key select
+frames 120
+dump out/shot/w8-netmenu.png
+
+# The six-item grid:
+#     판매거래소   구매거래소
+#     창고관리     우편함
+#     슬롯변경     캐쉬상점
+#
+# Three of the four server-only items, each entered from the grid and left with
+# `back`. 구매거래소 is deliberately skipped: its screen opens a text-entry
+# field that swallows `back`, so a replay that visits it never gets out — and
+# its frame is `4/7`, which 창고관리's own `4/6` handler answer already covers
+# from the same match arm.
+key select
+frames 150
+dump out/shot/w9-trade-sell.png
+key select
+frames 60
+key back
+frames 120
+
+key down
+frames 30
+key select
+frames 150
+dump out/shot/wa-storage.png
+key select
+frames 60
+key back
+frames 120
+
+key right
+frames 30
+key select
+frames 150
+dump out/shot/wb-mail.png
+key select
+frames 60
+key back
+frames 120
+
+# 슬롯변경 sends no packet at all; it must simply work.
+key left
+frames 30
+key down
+frames 30
+key select
+frames 150
+dump out/shot/wc-slotchange.png
+frames 60
+dump out/shot/wd-after.png

@@ -1,0 +1,49 @@
+[workspace]
+resolver = "2"
+members = ["hl5_core", "hl5_probe", "hl5_android"]
+
+# A bare `cargo build` at the root builds for the host, and `hl5_android`
+# cannot: it pulls winit/android-activity, which only make sense with an
+# android target. Leaving it out of the defaults means `cargo build` and
+# `cargo test` do the right thing here, while `build_android.ps1` names it
+# explicitly (`-p hl5_android`).
+default-members = ["hl5_core", "hl5_probe"]
+
+# Vendored fork of the ARM32 interpreter, carried over from the sibling
+# chronosSword project. `libHeroesLore5.so` is the same ARMv5TE / GCC 4.4.0
+# combination as `libchronosMian.so`, so all four of that fork's corrections are
+# needed here too — upstream (dlunch/arm32_cpu) targets ARMv4T and mis-decodes
+# SMUL<x><y>, LDRD/STRD, `cond == 0b1111` and `BLX <reg>`. The last of those is
+# the dangerous one: a missed `blx` executes as a no-op, so indirect calls
+# vanish silently rather than crashing. Kept out of the member list so its own
+# dev-dependencies never enter this build.
+exclude = ["vendor/arm32_cpu", "vendor/softbuffer"]
+
+# Vendored fork of softbuffer 0.4.8. Its Android present path did two things
+# per frame that a 2400x1080 window cannot afford, both between the guest's
+# frame and the compositor: `buffer_mut()` allocated AND ZEROED a fresh 10 MB
+# Vec on every call, and `present()` swizzled BGRA->RGBA one byte at a time.
+# Measured on the sibling project before the fork: ~18 fps whatever the
+# interpreter did, because neither cost depends on the guest. Only
+# `src/backends/android.rs` and two helpers in `src/util.rs` differ from the
+# published crate, each marked in the source.
+[patch.crates-io]
+softbuffer = { path = "vendor/softbuffer" }
+
+[workspace.package]
+version = "0.1.0"
+edition = "2021"
+license = "Proprietary"
+
+[workspace.dependencies]
+arm32_cpu = { path = "vendor/arm32_cpu" }
+
+[profile.dev]
+# The whole runtime is one hot loop (guest instruction decode + dispatch). An
+# unoptimized interpreter is roughly 50x slower and makes the probe unusable for
+# iteration, so debug builds are optimized too; `debug-assertions` stay on.
+opt-level = 3
+
+[profile.release]
+lto = true
+codegen-units = 1

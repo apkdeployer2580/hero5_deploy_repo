@@ -1,0 +1,94 @@
+# The title screen's 환경설정 save rows (`hl5_core::savexfer`, §70): import
+# a save exported elsewhere.
+#
+#   rm -rf out/savexfer-b
+#   cargo run -q -p hl5_probe -- --boot --storage out/savexfer-b \
+#       --screen-option --boot-mode skip-network \
+#       --save-doc out/savexfer-doc.h5save \
+#       --script tools_re/scripts/savexfer-title.txt
+#
+# `out/savexfer-doc.h5save` is what `savexfer-ingame.txt` exported. The whole
+# round trip, each a separate run on the same storage:
+#
+#   savexfer-title.txt    불러오기 -> 예 -> the document -> `<date> 캐릭터 1명 …`
+#                         -> 아니오 once, then 예: staged, the game asks to close
+#                         (summary: 1 staged, `guest exit asked for`)
+#   savexfer-slots.txt    the probe's first lines say the staged save was
+#                         applied and what it replaced went into the vault;
+#                         slot 1 holds the imported 워리어
+#   savexfer-restore.txt  되돌리기 names the vault generation -> 예 -> staged
+#   savexfer-slots.txt    applied again: the slots are what they were before
+#                         the import, and the vault now holds the import
+#
+# 400x240 coordinates. The list is fifteen rows; the save rows are 12, 13, 14.
+# NOT for `ab_905.sh`.
+
+frames 700
+tap 200 200          # title: "Tap to Continue"
+frames 90
+
+# 환경설정 is the middle of the 3x3 menu: right right down (the first key
+# only lights the grid).
+key right
+frames 20
+key right
+frames 20
+key down
+frames 20
+key select
+frames 60
+
+# Thirteen downs: 세이브 불러오기 is display 13.
+key down
+frames 8
+key down
+frames 8
+key down
+frames 8
+key down
+frames 8
+key down
+frames 8
+key down
+frames 8
+key down
+frames 8
+key down
+frames 8
+key down
+frames 8
+key down
+frames 8
+key down
+frames 8
+key down
+frames 8
+key down
+frames 20
+dump out/shot/savexfer-title-row13.png
+
+key select           # 불러오기
+frames 25
+dump out/shot/savexfer-title-ask.png
+key select           # 예
+frames 30
+dump out/shot/savexfer-title-apply.png
+key back             # 아니오 for now
+frames 25
+
+key down             # 세이브 되돌리기, with nothing in the vault yet
+frames 10
+key select
+frames 25
+dump out/shot/savexfer-title-novault.png
+key select           # OK
+frames 20
+
+key up               # back to 불러오기, and this time 예 twice
+frames 10
+key select
+frames 25
+key select
+frames 30
+key select           # 예: staged; the game closes
+frames 30
