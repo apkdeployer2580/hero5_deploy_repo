@@ -160,3 +160,22 @@ python tools_re/seamdiff.py \
 
 * 참조 구현: `C:\ChronosSwordNativeAPP` — 같은 midas 계층으로 만들어진 형제
   게임의 완성된 재호스트.
+
+<!-- release-section -->
+## 최신 릴리스 (APK)
+
+**[최신 APK 받기 → Releases](https://github.com/apkdeployer2580/hero5_deploy_repo/releases/latest)**
+
+| 판 | 파일 | versionCode |
+|---|---|---|
+| 일반판 | `hero5-v1.08-vc90.apk` | 90 |
+| vanilla 판 | `hero5-vanilla-v1.08-vc91.apk` | 91 |
+
+일반판은 (진) 종결 무기를 포함한 전부이고, vanilla 판은 (진) 무기를 새로 얻을 수 없다는 것만 다릅니다. 두 판은 같은 앱이라 한 폰에 하나만 설치됩니다. 쓰던 판을 받으세요.
+
+**이미 설치해서 하던 분 — 세이브를 그대로 이어 하려면**
+
+* 앱을 **지우지 말고** 받은 APK 를 그대로 설치하세요. 업데이트로 덮어 설치되고 세이브가 그대로 남습니다.
+* ⚠ 앱을 지우면 세이브도 함께 지워지고 되살릴 수 없습니다.
+* 「앱이 설치되지 않았습니다」가 뜨면 서명이 다른 APK(예: 이 소스로 직접 빌드한 APK)가 깔려 있는 것입니다. 게임의 환경설정에서 「세이브 내보내기」로 세이브를 파일로 빼 두고, 그 앱을 지운 뒤 새 APK 를 설치해서 「세이브 불러오기」로 넣으세요.
+* 공식 APK 의 서명 인증서 SHA-256: `9c834481eda1893c2d3b991950b87e1243b8047659f1fb0a29c52ebc790721eb`
